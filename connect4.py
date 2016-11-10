@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #connect4.py
 ###USAGE### connect4.py
-import AISuite.PythonLibraries.wordops_lib as wordops_lib
-import AISuite.PythonLibraries.prgm_lib as prgm_lib
+import PythonLibraries.wordops_lib as wordops_lib
+import PythonLibraries.prgm_lib as prgm_lib
 import re
-import AISuite.PythonLibraries.matrix_lib as matrix_lib
+import PythonLibraries.matrix_lib as matrix_lib
 from AISuite.game import Game as Game
 import AISuite.player as player
 
