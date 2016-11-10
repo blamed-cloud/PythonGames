@@ -112,7 +112,7 @@ class Connect4(Game):
 		self.check_winner()
 		
 
-num_games = 1000
+num_games = 10000
 
 win_counts = [0,0,0]
 for x in range(num_games):
