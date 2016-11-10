@@ -13,7 +13,7 @@ STANDARD_C4_WIDTH = 7
 
 class Connect4(Game):
 	def __init__(self, player1, player2, be_quiet = False):
-		super(Connect4, self).__init__(player1, player2, be_quiet)
+		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.matrix = matrix_lib.init_grid(STANDARD_C4_WIDTH,STANDARD_C4_HEIGHT,' ')
 		self.height = [0,0,0,0,0,0,0]
 		self.rows = STANDARD_C4_HEIGHT
@@ -23,7 +23,7 @@ class Connect4(Game):
 		for y in range(self.rows):
 			str1='| '
 			for x in range(self.cols):
-				str1=str1+str(matrix[y][x]) + ' | '
+				str1=str1+str(self.matrix[y][x]) + ' | '
 			print str1
 			print '-----------------------------'
 		print '  0   1   2   3   4   5   6'
@@ -92,7 +92,7 @@ class Connect4(Game):
 		while not finished_playing:
 			if human:
 				print "Enter a number between 0 and " + str(self.cols) + " to play in that column."
-			sq = self.current_player().choose_square(self)
+			sq = self.current_player().choose_move(self)
 			if sq in self.escapes:
 				self.handle_escape(sq)
 			if sq in possible_moves:
