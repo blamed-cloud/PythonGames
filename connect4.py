@@ -112,6 +112,36 @@ class Connect4(Game):
 		self.check_winner()
 		
 
+def connect4_heuristic(game_state):
+	value = 0
+	state_split = re.split(';', state)
+	turn = state_split[-1]
+	x_s_turn = (turn % 2) == 0
+	grid = state_split[:-1]
+	cols = len(grid[0])
+	temp_l=[]
+	for lst in grid:
+		temp_l = temp_l + [x for x in lst]
+	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True,True)
+	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True,True)
+	x_triple = wordops_lib.snake_search('XXX ',temp_l,cols,True,True)
+	o_triple = wordops_lib.snake_search('OOO ',temp_l,cols,True,True)
+	if x_quad:
+		value = 100
+	if o_quad:
+		value = -100
+	if x_triple:
+		if x_s_turn:
+			value = 100
+		else:
+			value = 50
+	if o_triple:
+		if not x_s_turn:
+			value = -100
+		else:
+			value = -50
+	return value
+
 num_games = 10000
 
 win_counts = [0,0,0]
