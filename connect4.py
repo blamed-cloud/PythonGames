@@ -11,6 +11,10 @@ import AISuite.player as player
 STANDARD_C4_HEIGHT = 6
 STANDARD_C4_WIDTH = 7
 
+def reverse(data):
+	for index in range(len(data)-1, -1, -1):
+		yield data[index]
+
 class Connect4(Game):
 	def __init__(self, player1, player2, be_quiet = False):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
@@ -20,7 +24,7 @@ class Connect4(Game):
 		self.cols = STANDARD_C4_WIDTH
 		
 	def opg(self):
-		for y in range(self.rows):
+		for y in reverse(range(self.rows)):
 			str1='| '
 			for x in range(self.cols):
 				str1=str1+str(self.matrix[y][x]) + ' | '
@@ -30,7 +34,7 @@ class Connect4(Game):
 
 	def check_winner(self):
 		temp_l=[]
-		for lst in matrix:
+		for lst in self.matrix:
 			temp_l=temp_l + lst
 		p1w=wordops_lib.snake_search('XXXX',temp_l,self.cols,True,True)
 		p2w=wordops_lib.snake_search('OOOO',temp_l,self.cols,True,True)
@@ -38,6 +42,8 @@ class Connect4(Game):
 			self.winner = 1
 		if p2w:
 			self.winner = 2
+		if min(self.height) == self.rows:
+			self.winner = 0
 		return self.winner		
 
 	def make_new_instance(self):
@@ -95,7 +101,7 @@ class Connect4(Game):
 			sq = self.current_player().choose_move(self)
 			if sq in self.escapes:
 				self.handle_escape(sq)
-			if sq in possible_moves:
+			if str(sq) in possible_moves:
 				self.matrix[self.height[int(sq)]][int(sq)] = self.get_player_icon(self.get_player_num())
 				self.height[int(sq)] += 1
 				self.turn += 1
@@ -106,6 +112,15 @@ class Connect4(Game):
 		self.check_winner()
 		
 
+num_games = 1000
 
-g = Connect4(player.Human(), player.RandomAI())
-g.play()
+win_counts = [0,0,0]
+for x in range(num_games):
+	g = Connect4(player.RandomAI(), player.RandomAI(),True)
+	w = g.play()
+	win_counts[w] += 1
+
+print win_counts
+for w in win_counts:
+	print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+print
