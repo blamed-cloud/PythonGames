@@ -23,6 +23,17 @@ class Connect4(Game):
 		self.rows = STANDARD_C4_HEIGHT
 		self.cols = STANDARD_C4_WIDTH
 		
+	def handle_escape(self, code):
+		if code == ":w":
+			print "UnemplementedError: saving"
+		elif code == ":wq":
+			print "UnemplementedError: saving"
+			raise SystemExit
+		elif code == ":q":
+			raise SystemExit
+		elif code == ":r":
+			connect4_heuristic(str(self))
+		
 	def opg(self):
 		for y in reverse(range(self.rows)):
 			str1='| '
@@ -54,9 +65,9 @@ class Connect4(Game):
 	
 	def __str__(self):
 		value = ''
-		for y in matrix:
+		for y in self.matrix:
 			str1 = ''
-			for x in matrix[y]:
+			for x in y:
 				str1 += str(x)
 			value += str1 + ';'
 		return value + str(self.turn)
@@ -114,18 +125,22 @@ class Connect4(Game):
 
 def connect4_heuristic(game_state):
 	value = 0
-	state_split = re.split(';', state)
-	turn = state_split[-1]
+	state_split = re.split(';', game_state)
+	turn = int(state_split[-1])
 	x_s_turn = (turn % 2) == 0
 	grid = state_split[:-1]
 	cols = len(grid[0])
 	temp_l=[]
 	for lst in grid:
 		temp_l = temp_l + [x for x in lst]
-	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True,True)
-	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True,True)
-	x_triple = wordops_lib.snake_search('XXX ',temp_l,cols,True,True)
-	o_triple = wordops_lib.snake_search('OOO ',temp_l,cols,True,True)
+	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True)
+	print "x_quad = %i" % (x_quad)
+	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True)
+	print "o_quad = %i" % (o_quad)
+	x_triple = wordops_lib.snake_search('XXX ',temp_l,cols,True)
+	print "x_triple = %i" % (x_triple)
+	o_triple = wordops_lib.snake_search('OOO ',temp_l,cols,True)
+	print "o_triple = %i" % (o_triple)
 	if x_quad:
 		value = 100
 	if o_quad:
@@ -140,7 +155,12 @@ def connect4_heuristic(game_state):
 			value = -100
 		else:
 			value = -50
+	print "value = %i" % (value)
 	return value
+
+
+g = Connect4(player.Human(), player.Human())
+g.play()
 
 num_games = 10000
 
