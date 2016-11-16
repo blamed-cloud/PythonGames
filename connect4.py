@@ -73,15 +73,21 @@ class Connect4(Game):
 		return value + str(self.turn)
 
 	def load_state_from_string(self, state):
+		print '"' + state + '"'
 		grid1 = re.split(';', state)
 		self.turn = int(grid1[-1])
 		grid2 = grid1[:-1]
+		print grid2
+		self.rows = len(grid2)
+		self.cols = len(grid2[0])
 		self.matrix = [[str(x) for x in y] for y in grid2]
+
 		self.calculate_height()
 		
 	def calculate_height(self):
+		self.height = [0,0,0,0,0,0,0]
 		for x in range(self.cols):
-			self.height[x]=min([y for y in range(self.rows) if matrix[y][x]==' '])
+			self.height[x]=min([y for y in range(self.rows) if self.matrix[y][x]==' '])
 			
 	def get_player_icon(self, p_num):
 		icons = [' ', 'X', 'O']
