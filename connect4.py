@@ -104,11 +104,13 @@ class Connect4(Game):
 		if human:
 			self.opg()
 		col = -1
+		if not self.quiet:
+			print "Turn " + str(self.turn)
 		finished_playing = False
 		possible_moves = [str(x) for x in self.get_child_moves()]
 		while not finished_playing:
 			if human:
-				print "Enter a number between 0 and " + str(self.cols) + " to play in that column."
+				print "Player" + str(self.get_player_num()) + ", enter a number between 0 and " + str(self.cols) + " to play in that column."
 			sq = self.current_player().choose_move(self)
 			if sq in self.escapes:
 				self.handle_escape(sq)
@@ -145,28 +147,34 @@ def connect4_heuristic(game_state):
 		value = 100
 	if o_quad:
 		value = -100
-	if x_triple:
+	if x_triple and not o_triple:
 		if x_s_turn:
-			value = 100
+			value = 75
 		else:
 			value = 50
-	if o_triple:
+	if o_triple and not x_triple:
 		if not x_s_turn:
-			value = -100
+			value = -75
+		else:
+			value = -50
+	if x_triple and o_triple:
+		if x_s_turn:
+			value = 50
 		else:
 			value = -50
 	print "value = %i" % (value)
 	return value
 
 
-g = Connect4(player.Human(), player.Human())
-g.play()
+#g = Connect4(player.Human(), player.Human())
+#g.play()
 
-num_games = 10000
+num_games = 10
 
 win_counts = [0,0,0]
 for x in range(num_games):
-	g = Connect4(player.RandomAI(), player.RandomAI(),True)
+	print "Beginning game %i" % (x)
+	g = Connect4(player.AI_ABPruning(connect4_heuristic),player.RandomAI(),False)
 	w = g.play()
 	win_counts[w] += 1
 
