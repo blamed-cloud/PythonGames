@@ -73,11 +73,9 @@ class Connect4(Game):
 		return value + str(self.turn)
 
 	def load_state_from_string(self, state):
-		print '"' + state + '"'
 		grid1 = re.split(';', state)
 		self.turn = int(grid1[-1])
 		grid2 = grid1[:-1]
-		print grid2
 		self.rows = len(grid2)
 		self.cols = len(grid2[0])
 		self.matrix = [[str(x) for x in y] for y in grid2]
@@ -101,7 +99,7 @@ class Connect4(Game):
 			self.matrix[self.height[col]][col] = self.get_player_icon(self.get_player_num())
 			self.height[col] += 1
 			self.turn += 1
-			states += str(self)
+			states += [str(self)]
 			self.load_state_from_string(root)
 		return states
 		
@@ -171,20 +169,20 @@ def connect4_heuristic(game_state):
 	print "value = %i" % (value)
 	return value
 
+if __name__ == "__main__":
+	#g = Connect4(player.Human(), player.Human())
+	#g.play()
 
-#g = Connect4(player.Human(), player.Human())
-#g.play()
+	num_games = 10
 
-num_games = 10
+	win_counts = [0,0,0]
+	for x in range(num_games):
+		print "Beginning game %i" % (x)
+		g = Connect4(player.AI_ABPruning(connect4_heuristic),player.RandomAI(),False)
+		w = g.play()
+		win_counts[w] += 1
 
-win_counts = [0,0,0]
-for x in range(num_games):
-	print "Beginning game %i" % (x)
-	g = Connect4(player.AI_ABPruning(connect4_heuristic),player.RandomAI(),False)
-	w = g.play()
-	win_counts[w] += 1
-
-print win_counts
-for w in win_counts:
-	print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
-print
+	print win_counts
+	for w in win_counts:
+		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+	print	
