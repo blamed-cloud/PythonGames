@@ -7,6 +7,7 @@ import re
 import PythonLibraries.matrix_lib as matrix_lib
 from AISuite.game import Game as Game
 import AISuite.player as player
+from AISuite.alphabeta import UPPER_BOUND, LOWER_BOUND
 
 STANDARD_C4_HEIGHT = 6
 STANDARD_C4_WIDTH = 7
@@ -16,12 +17,16 @@ def reverse(data):
 		yield data[index]
 
 class Connect4(Game):
-	def __init__(self, player1, player2, be_quiet = False):
+	def __init__(self, player1, player2, be_quiet = False, show_game = False):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.matrix = matrix_lib.init_grid(STANDARD_C4_WIDTH,STANDARD_C4_HEIGHT,' ')
 		self.height = [0,0,0,0,0,0,0]
 		self.rows = STANDARD_C4_HEIGHT
 		self.cols = STANDARD_C4_WIDTH
+		self.show_board = show_game
+		
+	def make_new_instance(self):
+		return Connect4(player.Player(), player.Player())
 		
 	def handle_escape(self, code):
 		if code == ":w":
@@ -55,10 +60,7 @@ class Connect4(Game):
 			self.winner = 2
 		if min(self.height) == self.rows:
 			self.winner = 0
-		return self.winner		
-
-	def make_new_instance(self):
-		return Connect4(player.Player(), player.Player())
+		return self.winner
 				
 	def get_child_moves(self):
 		return [x for x in range(self.cols) if self.height[x] < self.rows]
@@ -105,7 +107,7 @@ class Connect4(Game):
 		
 	def do_turn(self):
 		human = self.is_human_turn()
-		if human:
+		if human or self.show_board:
 			self.opg()
 		col = -1
 		if not self.quiet:
@@ -131,6 +133,7 @@ class Connect4(Game):
 
 def connect4_heuristic(game_state):
 	value = 0
+	#manipulate game_state into usable data
 	state_split = re.split(';', game_state)
 	turn = int(state_split[-1])
 	x_s_turn = (turn % 2) == 0
@@ -139,46 +142,47 @@ def connect4_heuristic(game_state):
 	temp_l=[]
 	for lst in grid:
 		temp_l = temp_l + [x for x in lst]
+		
+	#check if the game is over
 	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True)
-#	print "x_quad = %i" % (x_quad)
-	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True)
-#	print "o_quad = %i" % (o_quad)
-	x_triple = wordops_lib.snake_search('XXX ',temp_l,cols,True)
-#	print "x_triple = %i" % (x_triple)
-	o_triple = wordops_lib.snake_search('OOO ',temp_l,cols,True)
-#	print "o_triple = %i" % (o_triple)
 	if x_quad:
-		value = 100
+		return UPPER_BOUND
+	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True)
 	if o_quad:
-		value = -100
-	if x_triple and not o_triple:
-		if x_s_turn:
-			value = 75
-		else:
-			value = 50
-	if o_triple and not x_triple:
-		if not x_s_turn:
-			value = -75
-		else:
-			value = -50
-	if x_triple and o_triple:
-		if x_s_turn:
-			value = 50
-		else:
-			value = -50
-#	print "value = %i" % (value)
+		return LOWER_BOUND
+	
+	#do some calculations that probably take too long	
+	weights_x = {" XXX ": 8, "XXX ": 6, "OXXX ": 4, " XX  ": 2, "XX  ": 1, "OXX  ": 1, " XX O": 1}
+	weights_o = {" OOO ": -8, "OOO ": -6, "XOOO ": -4, " OO  ": -2, "OO  ": -1, "XOO  ": -1, " OO X": -1}
+	for string in weights_x:
+		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_x[string]
+	for string in weights_o:
+		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_o[string]
+	
+	#slight bonus for being your turn. may consider removing this
+	if x_s_turn:
+		value += 5
+	else:
+		value += -5
+	
+	#respect the bounds
+	if value > UPPER_BOUND:
+		value = UPPER_BOUND
+	elif value < LOWER_BOUND:
+		value = LOWER_BOUND
+	
 	return value
 
 if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
 
-	num_games = 10
+	num_games = 1
 
 	win_counts = [0,0,0]
 	for x in range(num_games):
 		print "Beginning game %i" % (x)
-		g = Connect4(player.AI_ABPruning(connect4_heuristic),player.RandomAI(),False)
+		g = Connect4(player.AI_ABPruning(connect4_heuristic, depth_lim = 4),player.RandomAI(),False, True)
 		w = g.play()
 		win_counts[w] += 1
 
