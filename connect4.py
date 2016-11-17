@@ -83,6 +83,7 @@ class Connect4(Game):
 		self.matrix = [[str(x) for x in y] for y in grid2]
 
 		self.calculate_height()
+		self.check_winner()
 		
 	def calculate_height(self):
 		self.height = [0,0,0,0,0,0,0]
@@ -152,8 +153,8 @@ def connect4_heuristic(game_state):
 		return LOWER_BOUND
 	
 	#do some calculations that probably take too long	
-	weights_x = {" XXX ": 8, "XXX ": 6, "OXXX ": 4, " XX  ": 2, "XX  ": 1, "OXX  ": 1, " XX O": 1}
-	weights_o = {" OOO ": -8, "OOO ": -6, "XOOO ": -4, " OO  ": -2, "OO  ": -1, "XOO  ": -1, " OO X": -1}
+	weights_x = {" XXX ": 8, "XXX ": 6, "OXXX ": 4, "X XX": 4, " XX  ": 2, "XX  ": 1, "OXX  ": 1, " XX O": 1}
+	weights_o = {" OOO ": -8, "OOO ": -6, "XOOO ": -4, "O OO": -4, " OO  ": -2, "OO  ": -1, "XOO  ": -1, " OO X": -1}
 	for string in weights_x:
 		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_x[string]
 	for string in weights_o:
@@ -166,10 +167,10 @@ def connect4_heuristic(game_state):
 		value += -5
 	
 	#respect the bounds
-	if value > UPPER_BOUND:
-		value = UPPER_BOUND
-	elif value < LOWER_BOUND:
-		value = LOWER_BOUND
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1
 	
 	return value
 
@@ -177,7 +178,7 @@ if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
 
-	num_games = 1
+	num_games = 5
 
 	win_counts = [0,0,0]
 	for x in range(num_games):
