@@ -85,7 +85,7 @@ class Connect4(Game):
 	def calculate_height(self):
 		self.height = [0,0,0,0,0,0,0]
 		for x in range(self.cols):
-			self.height[x]=min([y for y in range(self.rows) if self.matrix[y][x]==' '])
+			self.height[x]=min([y for y in range(self.rows) if self.matrix[y][x]==' '] + [self.rows])
 			
 	def get_player_icon(self, p_num):
 		icons = [' ', 'X', 'O']
@@ -140,13 +140,13 @@ def connect4_heuristic(game_state):
 	for lst in grid:
 		temp_l = temp_l + [x for x in lst]
 	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True)
-	print "x_quad = %i" % (x_quad)
+#	print "x_quad = %i" % (x_quad)
 	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True)
-	print "o_quad = %i" % (o_quad)
+#	print "o_quad = %i" % (o_quad)
 	x_triple = wordops_lib.snake_search('XXX ',temp_l,cols,True)
-	print "x_triple = %i" % (x_triple)
+#	print "x_triple = %i" % (x_triple)
 	o_triple = wordops_lib.snake_search('OOO ',temp_l,cols,True)
-	print "o_triple = %i" % (o_triple)
+#	print "o_triple = %i" % (o_triple)
 	if x_quad:
 		value = 100
 	if o_quad:
@@ -166,7 +166,7 @@ def connect4_heuristic(game_state):
 			value = 50
 		else:
 			value = -50
-	print "value = %i" % (value)
+#	print "value = %i" % (value)
 	return value
 
 if __name__ == "__main__":
