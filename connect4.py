@@ -7,7 +7,7 @@ import re
 import PythonLibraries.matrix_lib as matrix_lib
 from AISuite.game import Game as Game
 import AISuite.player as player
-from AISuite.alphabeta import UPPER_BOUND, LOWER_BOUND
+from AISuite.alphabeta import UPPER_BOUND, LOWER_BOUND, shallowest_first
 
 STANDARD_C4_HEIGHT = 6
 STANDARD_C4_WIDTH = 7
@@ -183,7 +183,9 @@ if __name__ == "__main__":
 	win_counts = [0,0,0]
 	for x in range(num_games):
 		print "Beginning game %i" % (x)
-		g = Connect4(player.AI_ABPruning(connect4_heuristic, depth_lim = 4),player.RandomAI(),False, True)
+		ai = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
+		ai.set_child_selector(shallowest_first)
+		g = Connect4(ai,player.RandomAI(),False, True)
 		w = g.play()
 		win_counts[w] += 1
 
