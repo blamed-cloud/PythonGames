@@ -1,6 +1,3 @@
-[submodule "PythonLibraries"]
-	path = PythonLibraries
-	url = git@github.com:blamed-cloud/PythonLibraries.git
 [submodule "AISuite"]
 	path = AISuite
 	url = https://github.com/blamed-cloud/AISuite.git
