@@ -42,6 +42,12 @@ class Checkers(Game):
 		print '-----------'
 		print ' |abcdefgh|'
 		
+	def get_player_icons(self, p_num = -1):
+		icons = [(' '), ('x', 'X'), ('o', 'O')]
+		if p_num == -1:
+			p_num = self.get_player_num()
+		return icons[p_num]
+		
 	def check_winner(self):
 		has_x = False
 		has_o = False
@@ -61,8 +67,6 @@ class Checkers(Game):
 		if has_o and not has_x:
 			self.winner = 2
 		return self.winner
-	
-
 		
 	def __str__(self):
 		value = ''
@@ -103,9 +107,41 @@ class Checkers(Game):
 			self.load_state_from_string(root)
 		return states	
 
+	def get_adj_moves(self, y, x, dist = 1, icon = ' '):
+		full_y = [-1*dist, dist]
+		dir_dict = {' ':full_y, 'X':full_y, 'O':full_y, 'x':[dist], 'o':[-1*dist]}
+		list_x = [-1*dist, dist]
+		moves = []
+		for off_y in dir_dict[icon]:
+			for off_x in list_x:
+				moves += [(y + off_y, x + off_x)]
+		final_moves = []
+		for m in moves:
+			if m[0] in range(self.rows) and m[1] in range(self.cols):
+				final_moves += [m]
+		return final_moves
+		
+	def sq2string(self, y, x):
+		num2let = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e', 5:'f', 6:'g', 7:'h'}
+		return num2let[x] + str(y)
+
 	#need to do this still	
 	def get_child_moves(self):
-		pass	
+		icons = self.get_player_icons()
+		moves = []
+		for y in range(self.rows):
+			for x in range(self.cols):
+				icon = self.matrix[y][x]
+				if icon in icons:
+					base = self.sq2string(y,x)
+					for m in self.get_adj_moves(y,x,1,icon):
+						if self.matrix[m[0]][m[1]] == ' ':
+							mv = self.sq2string(m[0],m[1])
+							moves += [base + '-' + mv]
+					#need second for-loop (probably recursion) for captures.
+					
+					
+					
 		
 	#need to finish this
 	def parse_move(self, move):
