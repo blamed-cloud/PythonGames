@@ -2,7 +2,6 @@
 #connect4.py
 ###USAGE### connect4.py
 import AISuite.PythonLibraries.wordops_lib as wordops_lib
-import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import re
 import AISuite.PythonLibraries.matrix_lib as matrix_lib
 from AISuite.game import Game as Game
@@ -119,7 +118,7 @@ class Connect4(Game):
 			if human:
 				print "Player" + str(self.get_player_num()) + ", enter a number between 0 and " + str(self.cols) + " to play in that column."
 			sq = self.current_player().choose_move(self)
-			if sq in self.escapes:
+			if human and sq in self.escapes:
 				self.handle_escape(sq)
 			if str(sq) in possible_moves:
 				self.matrix[self.height[int(sq)]][int(sq)] = self.get_player_icon(self.get_player_num())
@@ -178,7 +177,7 @@ if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
 
-	num_games = 3
+	num_games = 5
 
 	win_counts = [0,0,0]
 	for x in range(num_games):
