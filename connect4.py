@@ -161,10 +161,10 @@ def connect4_heuristic(game_state):
 		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_o[string]
 	
 	#slight bonus for being your turn. may consider removing this
-	if x_s_turn:
-		value += 5
-	else:
-		value += -5
+#	if x_s_turn:
+#		value += 5
+#	else:
+#		value += -5
 	
 	#respect the bounds
 	if value >= UPPER_BOUND:
@@ -178,14 +178,16 @@ if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
 
-	num_games = 5
+	num_games = 3
 
 	win_counts = [0,0,0]
 	for x in range(num_games):
 		print "Beginning game %i" % (x)
-		ai = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
-		ai.set_child_selector(shallowest_first)
-		g = Connect4(ai,player.RandomAI(),False, True)
+		ai1 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
+		ai1.set_child_selector(shallowest_first)
+		ai2 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
+		ai2.set_child_selector(shallowest_first)
+		g = Connect4(ai1,ai2,False, True)
 		w = g.play()
 		win_counts[w] += 1
 
