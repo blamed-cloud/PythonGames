@@ -14,6 +14,8 @@ def reverse(data):
 		yield data[index]
 
 class Checkers(Game):
+	escapes = [":w", ":q", ":wq", ":r", ":m"]
+	
 	def __init__(self, player1, player2, be_quiet = False, show_game = False):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.matrix = matrix_lib.init_grid(BOARD_SIZE, BOARD_SIZE, ' ')
@@ -30,17 +32,30 @@ class Checkers(Game):
 		self.cols = BOARD_SIZE
 		self.show_board = show_game
 		
+	def handle_escape(self, code):
+		if code == ":w":
+			print "UnemplementedError: saving"
+		elif code == ":wq":
+			print "UnemplementedError: saving"
+			raise SystemExit
+		elif code == ":q":
+			raise SystemExit
+		elif code == ":r":
+			pass
+		elif code == ":m":
+			print self.get_child_moves()
+		
 	def make_new_instance(self):
 		return Checkers(player.Player(), player.Player())
 		
 	def opg(self):
 		for y in reverse(range(self.rows)):
-			str1 = str(y) + '|'
+			str1 = str(y)
 			for x in range(self.cols):
-				str1 = str1 + str(self.matrix[y][x])
+				str1 = str1 + '|' + str(self.matrix[y][x])
 			print str1 + '|'
-		print '-----------'
-		print ' |abcdefgh|'
+		print '------------------'
+		print ' |a|b|c|d|e|f|g|h|'
 		
 	def get_player_icons(self, p_num = -1):
 		icons = [(' '), ('x', 'X'), ('o', 'O')]
@@ -67,15 +82,6 @@ class Checkers(Game):
 		if has_o and not has_x:
 			self.winner = 2
 		return self.winner
-		
-	def __str__(self):
-		value = ''
-		for row in self.matrix:
-			str1 = ''
-			for x in row:
-				str1 += str(x)
-			value += str1 + ';'
-		return value + str(self.turn)
 		
 	def load_state_from_string(self, state):
 		grid1 = re.split(';', state)
@@ -125,7 +131,27 @@ class Checkers(Game):
 		num2let = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e', 5:'f', 6:'g', 7:'h'}
 		return num2let[x] + str(y)
 
-	#need to do this still	
+	def get_captures(self,y,x,token, invalid_sq = []):
+		captures = []
+		base = self.sq2string(y,x)
+		away_2 = self.get_adj_moves(y,x,2,token)
+		away_1 = self.get_adj_moves(y,x,1,token)
+		for move in away_2:
+			if self.matrix[move[0]][move[1]] == ' ':
+				new_away_1 = self.get_adj_moves(move[0],move[1],1)
+				for cap in away_1:
+					if cap in new_away_1 and cap not in invalid_sq:
+						enemy = self.matrix[cap[0]][cap[1]]
+						if enemy != ' ' and enemy.upper() != token.upper():
+							new_sq = self.sq2string(move[0],move[1])
+							new_invalid_sq = invalid_sq + [cap]
+							captures += [base + '-' + new_sq]
+							new_caps = self.get_captures(move[0],move[1],token,new_invalid_sq)
+							new_caps1 = [base + '-' + x for x in new_caps]
+							captures += new_caps1
+		return captures		
+
+	#currently, if a piece would promote, that ends it's turn.	
 	def get_child_moves(self):
 		icons = self.get_player_icons()
 		moves = []
@@ -138,23 +164,37 @@ class Checkers(Game):
 						if self.matrix[m[0]][m[1]] == ' ':
 							mv = self.sq2string(m[0],m[1])
 							moves += [base + '-' + mv]
-					#need second for-loop (probably recursion) for captures.
-					
-					
-					
-		
-	#need to finish this
+					self.matrix[y][x] = ' '	#this avoids the edge case where a king-piece moves back to it's square.
+					moves += self.get_captures(y,x,icon)
+					self.matrix[y][x] = icon
+		return moves		
+
+	def get_in_between_sq(self,base,move):
+		away_1_base = self.get_adj_moves(base[0],base[1],1)
+		away_1_move = self.get_adj_moves(move[0],move[1],1)
+		for m in away_1_base:
+			if m in away_1_move:
+				return m
+
 	def parse_move(self, move):
 		let2num = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
 		value = []
 		moves = re.split('-', move)
-		for sq in moves:	#still needs to add in-between squares
+		for sq in moves:
 			row = int(sq[1])
 			col = let2num[sq[0]]
 			value += [(row,col)]
-		return value
+		sq_list = []
+		for x in range(len(value)-1):
+			base = value[x]
+			next = value[x+1]
+			sq_list += [base]
+			if next in self.get_adj_moves(base[0],base[1],2):
+				sq_list += [self.get_in_between_sq(base,next)]
+		sq_list += [value[-1]]
+		return sq_list
 #		returns a list of tuples of indices [(y,x)]
-#		that includes every square it technically moved to
+#		that includes every square it technically moved to, in order
 #		even squares of opponents pieces it hopped over.
 		
 	def do_turn(self):
@@ -168,7 +208,7 @@ class Checkers(Game):
 		possible_moves = self.get_child_moves()
 		while not finished_playing:
 			if human:
-				print + str(self.get_player_num()) + ", enter a valid checkers move"
+				print "Player" + str(self.get_player_num()) + ", enter a valid checkers move"
 			move = self.current_player().choose_move(self)
 			if human and move in self.escapes:
 				self.handle_escape(move)
@@ -189,12 +229,58 @@ class Checkers(Game):
 				if human:
 					print 'That wasn\'t a valid move.'
 					print 'valid moves look like: a3-b4 or a3-c5-a7'
+					self.opg()
 		self.check_winner()
-				
+
+	def __str__(self):
+		value = ''
+		for row in self.matrix:
+			str1 = ''
+			for x in row:
+				str1 += str(x)
+			value += str1 + ';'
+		return value + str(self.turn)
+		
+	
+def checkers_heuristic(game_state):
+	value = 0
+	#manipulate game_state into usable data
+	state_split = re.split(';', game_state)
+	turn = int(state_split[-1])
+	x_s_turn = (turn % 2) == 0
+	grid = state_split[:-1]
+	cols = len(grid[0])
+	temp_l=[]
+	for lst in grid:
+		temp_l = temp_l + [x for x in lst]
+		
+	#check if the game is over
+	
+	#do some calculations that probably take too long
+	
+	#respect the bounds
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1
+	
+	return value
 				
 if __name__ == "__main__":
-	g = Checkers(player.Human(), player.Human())
-	g.opg()
 	
+	num_games = 100
 	
+	win_counts = [0,0,0]
+	for x in range(num_games):
+		g = Checkers(player.RandomAI(),player.RandomAI(),True)
+		w = g.play()
+		win_counts[w] += 1
+		if w == 0:
+			g.opg()
+
+	
+	print win_counts
+	for w in win_counts:
+		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+	print	
 	
