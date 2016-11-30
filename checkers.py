@@ -31,6 +31,7 @@ class Checkers(Game):
 		self.rows = BOARD_SIZE
 		self.cols = BOARD_SIZE
 		self.show_board = show_game
+		self.moves_since_capture = 0
 		
 	def handle_escape(self, code):
 		if code == ":w":
@@ -66,6 +67,9 @@ class Checkers(Game):
 	def check_winner(self):
 		has_x = False
 		has_o = False
+		if self.moves_since_capture == 50:
+			self.winner = 0
+			return 0
 		for row in self.matrix:
 			for item in row:
 				if item == 'x' or item == 'X':
@@ -76,7 +80,7 @@ class Checkers(Game):
 				break
 		if has_x and has_o:
 			if self.get_child_moves() == []:
-				self.winner = 0
+				self.winner = (self.turn + 1 % 2) + 1 
 		if has_x and not has_o:
 			self.winner = 1
 		if has_o and not has_x:
@@ -85,20 +89,24 @@ class Checkers(Game):
 		
 	def load_state_from_string(self, state):
 		grid1 = re.split(';', state)
-		self.turn = int(grid1[-1])
-		grid2 = grid1[:-1]
+		self.moves_since_capture = int(grid1[-1])
+		self.winner = int(grid1[-2])
+		self.turn = int(grid1[-3])
+		grid2 = grid1[:-3]
 		self.rows = len(grid2)
 		self.cols = len(grid2[0])
 		self.matrix = [[str(x) for x in row] for row in grid2]
-		
-		self.check_winner()
 		
 	def get_child_states(self):
 		root = str(self)
 		moves = self.get_child_moves()
 		states = []
 		for mv in moves:
-			indices = self.parse_move(move)
+			indices = self.parse_move(mv)
+			if len(indices) == 2:
+				self.moves_since_capture += 1
+			else:
+				self.moves_since_capture = 0
 			start = indices[0]
 			last = indices[-1]
 			indices = indices[:-1]
@@ -214,6 +222,10 @@ class Checkers(Game):
 				self.handle_escape(move)
 			if str(move) in possible_moves:
 				indices = self.parse_move(move)
+				if len(indices) == 2:
+					self.moves_since_capture += 1
+				else:
+					self.moves_since_capture = 0
 				start = indices[0]
 				last = indices[-1]
 				indices = indices[:-1]
@@ -239,24 +251,43 @@ class Checkers(Game):
 			for x in row:
 				str1 += str(x)
 			value += str1 + ';'
-		return value + str(self.turn)
+		return value + str(self.turn) + ';' + str(self.winner) + ';' + str(self.moves_since_capture)
 		
 	
 def checkers_heuristic(game_state):
 	value = 0
 	#manipulate game_state into usable data
 	state_split = re.split(';', game_state)
-	turn = int(state_split[-1])
+	draw50 = int(state_split[-1])
+	winner = int(state_split[-2])
+	turn = int(state_split[-3])
 	x_s_turn = (turn % 2) == 0
-	grid = state_split[:-1]
-	cols = len(grid[0])
-	temp_l=[]
-	for lst in grid:
-		temp_l = temp_l + [x for x in lst]
-		
+	grid = state_split[:-3]
+	matrix = [[x for x in y] for y in grid]
+	cols = len(matrix[0])
+	rows = len(matrix)	
 	#check if the game is over
-	
+	if winner == 1:
+		return UPPER_BOUND
+	elif winner == 2:
+		return LOWER_BOUND
+	elif winner == 0:
+		return 0
 	#do some calculations that probably take too long
+	VALUE_X = lambda y: 10
+	VALUE_O = lambda y: -VALUE_X(y)
+	value_x = lambda y: y+1
+	value_o = lambda y: 8-y
+	value_dict = {'X':VALUE_X, 'O':VALUE_O, 'x':value_x, 'o':value_o}
+	for y in range(len(matrix)):
+		for x in range(len(matrix[y])):
+			token = matrix[y][x]
+			if token in value_dict:
+				value += value_dict[token](y)
+	if value > 0:
+		value = max(0,value - draw50)
+	elif value < 0:
+		value = min(0, value + draw50)			
 	
 	#respect the bounds
 	if value >= UPPER_BOUND:
@@ -268,17 +299,33 @@ def checkers_heuristic(game_state):
 				
 if __name__ == "__main__":
 	
-	num_games = 100
+	#some random games
+#	num_games_random = 100
+#	win_counts_random = [0,0,0]
+#	for x in range(num_games_random):
+#		g = Checkers(player.RandomAI(),player.RandomAI(),True)
+#		w = g.play()
+#		win_counts_random[w] += 1
+#		if w == 0:
+#			g.opg()
+#	print win_counts_random
+#	for w in win_counts_random:
+#		print str(w) + "/" + str(num_games_random) + " : " + str(w/float(num_games_random))
+#	print
 	
+	#some AI games
+	num_games = 5
 	win_counts = [0,0,0]
 	for x in range(num_games):
-		g = Checkers(player.RandomAI(),player.RandomAI(),True)
+		print "Beginning game %i" % (x)
+		ai1 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
+		ai1.set_child_selector(shallowest_first)
+		ai2 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
+		ai2.set_child_selector(shallowest_first)
+		g = Checkers(ai1,ai2,False, True)
 		w = g.play()
 		win_counts[w] += 1
-		if w == 0:
-			g.opg()
 
-	
 	print win_counts
 	for w in win_counts:
 		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
