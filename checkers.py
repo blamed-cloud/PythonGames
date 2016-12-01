@@ -284,6 +284,7 @@ def checkers_heuristic(game_state):
 			token = matrix[y][x]
 			if token in value_dict:
 				value += value_dict[token](y)
+	#give the game a more draw-ish value the closer it is to the 50-move limit
 	if value > 0:
 		value = max(0,value - draw50)
 	elif value < 0:
