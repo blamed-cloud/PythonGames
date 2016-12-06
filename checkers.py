@@ -277,7 +277,7 @@ def checkers_heuristic(game_state):
 	VALUE_X = lambda y: 10
 	VALUE_O = lambda y: -VALUE_X(y)
 	value_x = lambda y: y+1
-	value_o = lambda y: 8-y
+	value_o = lambda y: y-8
 	value_dict = {'X':VALUE_X, 'O':VALUE_O, 'x':value_x, 'o':value_o}
 	for y in range(len(matrix)):
 		for x in range(len(matrix[y])):
