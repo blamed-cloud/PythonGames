@@ -28,7 +28,7 @@ class Othello(Game):
 		self.show_board = show_game
 		
 	def make_new_instance(self):
-		return Checkers(player.Player(), player.Player())
+		return Othello(player.Player(), player.Player())
 	
 	def handle_escape(self, code):
 		if code == ":w":
@@ -216,17 +216,59 @@ class Othello(Game):
 					print 'valid moves look like: a3 or c5'
 					self.opg()
 		self.check_winner()
+	
+def value_of_square(y,x, size = BOARD_SIZE):
+	value = 1
+	if y == 0 or y == size - 1:
+		value += 3
+	if x == 0 or x == size - 1:
+		value += 3
+	return value	
+		
+def othello_heuristic(game_state):
+	value = 0
+	#manipulate game_state into usable data
+	state_split = re.split(';', game_state)
+	winner = int(state_split[-1])
+	turn = int(state_split[-2])
+	x_s_turn = (turn % 2) == 0
+	grid = state_split[:-2]
+	matrix = [[x for x in y] for y in grid]
+	cols = len(matrix[0])
+	rows = len(matrix)	
+	#check if the game is over
+	if winner == 1:
+		return UPPER_BOUND
+	elif winner == 2:
+		return LOWER_BOUND
+	elif winner == 0:
+		return 0
+	#do some calculations that probably take too long
+	value_dict = {'X':1, 'O':-1}
+	for y in range(len(matrix)):
+		for x in range(len(matrix[y])):
+			token = matrix[y][x]
+			if token in value_dict:
+				value += value_dict[token]*value_of_square(y,x)
+				
+	#respect the bounds
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1
+	
+	return value	
 		
 if __name__ == "__main__":
 	
-	g = Othello(player.Human(),player.Human())
-	g.play()
+#	g = Othello(player.Human(),player.Human())
+#	g.play()
 	
 	#some random games
 #	num_games_random = 100
 #	win_counts_random = [0,0,0]
 #	for x in range(num_games_random):
-#		g = Checkers(player.RandomAI(),player.RandomAI(),True)
+#		g = Othello(player.RandomAI(),player.RandomAI(),True)
 #		w = g.play()
 #		win_counts_random[w] += 1
 #		if w == 0:
@@ -237,19 +279,21 @@ if __name__ == "__main__":
 #	print
 	
 	#some AI games
-#	num_games = 5
-#	win_counts = [0,0,0]
-#	for x in range(num_games):
-#		print "Beginning game %i" % (x)
-#		ai1 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
-#		ai1.set_child_selector(shallowest_first)
-#		ai2 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
-#		ai2.set_child_selector(shallowest_first)
-#		g = Checkers(ai1,ai2,False, True)
-#		w = g.play()
-#		win_counts[w] += 1
+	num_games = 5
+	win_counts = [0,0,0]
+	for x in range(num_games):
+		print "Beginning game %i" % (x)
+		ai1 = player.AI_ABPruning(othello_heuristic, depth_lim = 5)
+		ai1.set_child_selector(shallowest_first)
+		ai2 = player.AI_ABPruning(othello_heuristic, depth_lim = 5)
+		ai2.set_child_selector(shallowest_first)
+		g = Othello(ai1,ai2,False, True)
+		w = g.play()
+		win_counts[w] += 1
 
-#	print win_counts
-#	for w in win_counts:
-#		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
-#	print	
+	print win_counts
+	for w in win_counts:
+		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+	print
+
+
