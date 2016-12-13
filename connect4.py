@@ -7,6 +7,7 @@ import AISuite.PythonLibraries.matrix_lib as matrix_lib
 from AISuite.game import Game as Game
 import AISuite.player as player
 from AISuite.alphabeta import UPPER_BOUND, LOWER_BOUND, shallowest_first
+import AISuite.recorder as recorder
 
 STANDARD_C4_HEIGHT = 6
 STANDARD_C4_WIDTH = 7
@@ -71,16 +72,16 @@ class Connect4(Game):
 			for x in y:
 				str1 += str(x)
 			value += str1 + ';'
-		return value + str(self.turn)
+		return value + str(self.turn) + ';' + str(self.winner)
 
 	def load_state_from_string(self, state):
 		grid1 = re.split(';', state)
-		self.turn = int(grid1[-1])
-		grid2 = grid1[:-1]
+		self.winner = int(grid1[-1])
+		self.turn = int(grid1[-2])
+		grid2 = grid1[:-2]
 		self.rows = len(grid2)
 		self.cols = len(grid2[0])
 		self.matrix = [[str(x) for x in y] for y in grid2]
-
 		self.calculate_height()
 		self.check_winner()
 		
@@ -135,21 +136,22 @@ def connect4_heuristic(game_state):
 	value = 0
 	#manipulate game_state into usable data
 	state_split = re.split(';', game_state)
-	turn = int(state_split[-1])
+	winner = int(state_split[-1])
+	turn = int(state_split[-2])
 	x_s_turn = (turn % 2) == 0
-	grid = state_split[:-1]
+	grid = state_split[:-2]
 	cols = len(grid[0])
 	temp_l=[]
 	for lst in grid:
 		temp_l = temp_l + [x for x in lst]
 		
 	#check if the game is over
-	x_quad = wordops_lib.snake_search('XXXX',temp_l,cols,True)
-	if x_quad:
+	if winner == 1:
 		return UPPER_BOUND
-	o_quad = wordops_lib.snake_search('OOOO',temp_l,cols,True)
-	if o_quad:
+	elif winner == 2:
 		return LOWER_BOUND
+	elif winner == 0:
+		return 0
 	
 	#do some calculations that probably take too long	
 	weights_x = {" XXX ": 8, "XXX ": 6, "OXXX ": 4, "X XX": 4, " XX  ": 2, "XX  ": 1, "OXX  ": 1, " XX O": 1}
@@ -158,12 +160,6 @@ def connect4_heuristic(game_state):
 		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_x[string]
 	for string in weights_o:
 		value += wordops_lib.snake_search(string,temp_l,cols,True)*weights_o[string]
-	
-	#slight bonus for being your turn. may consider removing this
-#	if x_s_turn:
-#		value += 5
-#	else:
-#		value += -5
 	
 	#respect the bounds
 	if value >= UPPER_BOUND:
@@ -176,21 +172,58 @@ def connect4_heuristic(game_state):
 if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
+	
+	option = "recorder_test"
+	filename = "c4_game_data.txt"
+	
+	if option == "simulate":
+		#some random games
+		num_games_random = 100000
+		win_counts_random = [0,0,0]
+		FILE = open(filename, 'a')
+		for x in range(num_games_random):
+			g = Connect4(player.RandomAI(),player.RandomAI(),True)
+			w = g.play()
+			FILE.write(str(g) + '\n')
+			if x % 1000 == 0:
+				print x
+			win_counts_random[w] += 1
+		FILE.close()
+		print win_counts_random
+		for w in win_counts_random:
+			print str(w) + "/" + str(num_games_random) + " : " + str(w/float(num_games_random))
+		print
+		
+	elif option == "recorder_test":
+		rec = recorder.Recorder(filename, STANDARD_C4_HEIGHT, STANDARD_C4_WIDTH, ['X','O',' '])
+		num_games = 10
+		win_counts = [0,0,0]
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 5)
+			ai1.set_child_selector(shallowest_first)
+			g = Connect4(ai1,player.RandomAI(),True)
+			w = g.play()
+			win_counts[w] += 1
+		print win_counts
+		for w in win_counts:
+			print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+		print
 
-	num_games = 5
+	elif option == "heuristic_test":
+		num_games = 5
+		win_counts = [0,0,0]
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
+			ai1.set_child_selector(shallowest_first)
+			ai2 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
+			ai2.set_child_selector(shallowest_first)
+			g = Connect4(ai1,ai2,False, True)
+			w = g.play()
+			win_counts[w] += 1
+		print win_counts
+		for w in win_counts:
+			print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+		print
 
-	win_counts = [0,0,0]
-	for x in range(num_games):
-		print "Beginning game %i" % (x)
-		ai1 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
-		ai1.set_child_selector(shallowest_first)
-		ai2 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
-		ai2.set_child_selector(shallowest_first)
-		g = Connect4(ai1,ai2,False, True)
-		w = g.play()
-		win_counts[w] += 1
-
-	print win_counts
-	for w in win_counts:
-		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
-	print	
