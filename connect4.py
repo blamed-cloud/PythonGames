@@ -200,9 +200,9 @@ if __name__ == "__main__":
 		win_counts = [0,0,0]
 		for x in range(num_games):
 			print "Beginning game %i" % (x)
-			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 5)
+			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 4)
 			ai1.set_child_selector(shallowest_first)
-			g = Connect4(ai1,player.RandomAI(),True)
+			g = Connect4(ai1, player.RandomAI(), False, True)
 			w = g.play()
 			win_counts[w] += 1
 		print win_counts
