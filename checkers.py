@@ -80,7 +80,7 @@ class Checkers(Game):
 				break
 		if has_x and has_o:
 			if self.get_child_moves() == []:
-				self.winner = (self.turn + 1 % 2) + 1 
+				self.winner = ((self.turn + 1) % 2) + 1 
 		if has_x and not has_o:
 			self.winner = 1
 		if has_o and not has_x:
@@ -299,36 +299,62 @@ def checkers_heuristic(game_state):
 	return value
 				
 if __name__ == "__main__":
+	#g = Connect4(player.Human(), player.Human())
+	#g.play()
 	
-	#some random games
-#	num_games_random = 100
-#	win_counts_random = [0,0,0]
-#	for x in range(num_games_random):
-#		g = Checkers(player.RandomAI(),player.RandomAI(),True)
-#		w = g.play()
-#		win_counts_random[w] += 1
-#		if w == 0:
-#			g.opg()
-#	print win_counts_random
-#	for w in win_counts_random:
-#		print str(w) + "/" + str(num_games_random) + " : " + str(w/float(num_games_random))
-#	print
-	
-	#some AI games
-	num_games = 5
+	option = "simulate"
+	filename = "ch_game_data.txt"
+	num_games = 0
 	win_counts = [0,0,0]
-	for x in range(num_games):
-		print "Beginning game %i" % (x)
-		ai1 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
-		ai1.set_child_selector(shallowest_first)
-		ai2 = player.AI_ABPruning(checkers_heuristic, depth_lim = 5)
-		ai2.set_child_selector(shallowest_first)
-		g = Checkers(ai1,ai2,False, True)
-		w = g.play()
-		win_counts[w] += 1
+	
+	if option == "simulate":
+		num_games = 1000
+		FILE = open(filename, 'a')
+		for x in range(num_games):
+			g = Checkers(player.RandomAI(),player.RandomAI(),True)
+			w = g.play()
+			g.record_history_to_file(FILE)
+			if x % 100 == 0:
+				print x
+			win_counts[w] += 1
+		FILE.close()
+		
+	elif option == "recorder_test":
+		rec = recorder.Recorder(filename, BOARD_SIZE, BOARD_SIZE, ['X','O',' '])
+		num_games = 10
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 4)
+			ai1.set_child_selector(shallowest_first)
+			g = Checkers(player.RandomAI(), ai1, False, True)
+			w = g.play()
+			win_counts[w] += 1
 
+	elif option == "heuristic_test":
+		num_games = 5
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(checkers_heuristic, depth_lim = 4)
+			ai1.set_child_selector(shallowest_first)
+			ai2 = player.AI_ABPruning(checkers_heuristic, depth_lim = 4)
+			ai2.set_child_selector(shallowest_first)
+			g = Checkers(ai1,ai2,False, True)
+			w = g.play()
+			win_counts[w] += 1
+		
+	elif option == "vs_mode":
+		rec = recorder.Recorder(filename, BOARD_SIZE, BOARD_SIZE, ['X','O',' '])
+		num_games = 5
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 5)
+			ai1.set_child_selector(shallowest_first)
+			ai2 = player.AI_ABPruning(checkers_heuristic, depth_lim = 3)
+			ai2.set_child_selector(shallowest_first)
+			g = Checkers(ai1,ai2,False, True)
+			w = g.play()
+			win_counts[w] += 1
 	print win_counts
 	for w in win_counts:
 		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
-	print	
-	
+	print
