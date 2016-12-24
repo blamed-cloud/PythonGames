@@ -162,15 +162,6 @@ elif humans == 2:
 	player2 = player.Human()
 	
 win_counts = [0,0,0]
-
-#####
-print "depth_x " + str(depth_x)
-print "depth_o " + str(depth_o)
-print ai_x
-print ai_o
-print player1
-print player2
-#####
 		
 if option == "simulate_all":	
 	filename = prefix + "game_data_all.txt"
