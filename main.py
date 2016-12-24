@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-o <option>] [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <game>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <ai_type_x>] [-a <ai_type_o>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-o <'simulate_all'/'simulate_end'/'simulate_d2_end'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <ai_type_x>] [-a <ai_type_o>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
@@ -30,7 +30,7 @@ arg_dict[re_mk('quiet')] = 0
 arg_dict[re_mk('xhuman')] = 0
 arg_dict[re_mk('ohuman')] = 0
 
-flag_argc = [1,1,1,1,1,1,1,1,0,0,0,0]
+flag_argc = [1,1,1,1,1,1,1,1,1,0,0,0,0]
 flags = [re_mk('options'), re_mk('num_games'), re_mk('file'), re_mk('humans'), re_mk('game'), re_mk('DepthlimX'), re_mk('depthlimO'), re_mk('AitypeX'), re_mk('aitypeO'), re_mk('show'), re_mk('quiet'), re_mk('xhuman'), re_mk('ohuman')]
 
 o_args = prgm_lib.arg_flag_ordering(sys.argv, flag_argc, flags)
@@ -122,6 +122,9 @@ if filename == "default":
 player1 = player.RandomAI()
 player2 = player.RandomAI()
 rec = None
+
+
+
 if ai_x == "random":
 	pass
 elif ai_x == "heuristic":
@@ -159,6 +162,15 @@ elif humans == 2:
 	player2 = player.Human()
 	
 win_counts = [0,0,0]
+
+#####
+print "depth_x " + str(depth_x)
+print "depth_o " + str(depth_o)
+print ai_x
+print ai_o
+print player1
+print player2
+#####
 		
 if option == "simulate_all":	
 	filename = prefix + "game_data_all.txt"
