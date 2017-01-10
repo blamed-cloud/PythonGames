@@ -14,8 +14,6 @@ def reverse(data):
 		yield data[index]
 
 class Checkers(Game):
-	escapes = [":w", ":q", ":wq", ":r", ":m"]
-	
 	def __init__(self, player1, player2, be_quiet = False, show_game = False):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.matrix = matrix_lib.init_grid(BOARD_SIZE, BOARD_SIZE, ' ')
@@ -32,19 +30,6 @@ class Checkers(Game):
 		self.cols = BOARD_SIZE
 		self.show_board = show_game
 		self.moves_since_capture = 0
-		
-	def handle_escape(self, code):
-		if code == ":w":
-			print "UnemplementedError: saving"
-		elif code == ":wq":
-			print "UnemplementedError: saving"
-			raise SystemExit
-		elif code == ":q":
-			raise SystemExit
-		elif code == ":r":
-			pass
-		elif code == ":m":
-			print self.get_child_moves()
 		
 	def make_new_instance(self):
 		return Checkers(player.Player(), player.Player())
@@ -80,7 +65,7 @@ class Checkers(Game):
 				break
 		if has_x and has_o:
 			if self.get_child_moves() == []:
-				self.winner = ((self.turn + 1) % 2) + 1 
+				self.winner = ((self.turn + 1) % 2) + 1
 		if has_x and not has_o:
 			self.winner = 1
 		if has_o and not has_x:
