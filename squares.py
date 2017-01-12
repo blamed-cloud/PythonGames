@@ -55,6 +55,13 @@ class Square(object):
 				self.links[direction].fill_side(Square.reverse_side[direction], player_tag)
 				filled = filled or self.links[direction].is_full()
 		return filled
+		
+	def empty_side(self, direction):
+		self.filled = False
+		if self.side[direction] != 0:
+			self.side[direction] = 0
+			if direction in self.links:
+				self.links[direction].empty_side(Square.reverse_side[direction])
 				
 	def primary_print_str(self, direction):
 		value = ""
@@ -65,7 +72,7 @@ class Square(object):
 				value = " "
 		return value
 		
-def Squares(Game):
+class Squares(Game):
 	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 4, n_cols = 5):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.grid = []
@@ -96,11 +103,14 @@ def Squares(Game):
 			for sq in row:
 				box_str = ''
 				for s in self.sides:
-					if sq.is_side_filled(s):
+					if sq.is_side_used(s):
 						box_str += s[0]
 					else:
 						box_str += ' '
 				str1 += box_str + ','
+			value += str1 + ';'
+		value += str(self.turn) + ';' + str(self.winner)
+		return value
 		
 	def load_state_from_string(self, state):
 		pass
@@ -110,20 +120,48 @@ def Squares(Game):
 		moves = self.get_child_moves()
 		states = []
 		for mv in moves:
-			#update game-state
+			for x in mv.split(','):
+				self.update_state(*self.move_str2list(x))
+			self.check_winner()
+			self.turn += 1
 			states += [str(self)]
 			self.load_state_from_string(root)
+		return states
 		
 	def get_child_moves(self):
 		moves = []
 		for y in range(self.rows):
 			for x in range(self.cols):
 				for s in self.sides:
-					if self.grid[y][x].is_side_primary(s)
+					if self.grid[y][x].is_side_primary(s):
 						if not self.grid[y][x].is_side_used(s):
-							moves += [str(y) + '-' + str(x) + s[0]]
+							mv_str = str(y) + '-' + str(x) + s[0]
+							full = self.update_state(y,x,s)
+							if full and self.check_winner() == -1:
+								new_moves = self.get_child_moves()
+								for mv in new_moves:
+									moves += [mv_str + ',' + mv]
+							else:
+								moves += [mv_str]
+							self.grid[row][col].empty_side(s)
 		return moves
-						
+		
+	def update_state(self, row, col, side):
+		fill = False
+		if self.is_valid_sq_pos([row,col]):
+			if not self.grid[row][col].is_side_used(side):
+				fill = self.grid[row][col].fill_side(side, self.get_player_num())
+		return fill
+		
+	def move_str2list(self, mv):
+		row = mv.split('-')[0]
+		col = mv[:-1].split('-')[1]
+		side = None
+		for s in self.sides:
+			if mv[-1] in s:
+				side = s
+				break
+		return [row,col,side]			
 
 	def do_turn(self):
 		human = self.is_human_turn()
@@ -139,31 +177,21 @@ def Squares(Game):
 				print "where r is the row number (0-indexed)"
 				print "c is the column number (0-indexed)"
 				print "and S is one of U/D/L/R, for the side of the square."
-			mv = self.current_player().choose_square(self)
+			mv = self.current_player().choose_move(self)
 			if human and mv in self.escapes:
 				self.handle_escape(sq)
 			else:
-				row = mv.split('-')[0]
-				col = mv[:-1].split('-')[1]
-				side = None
-				for s in self.sides:
-					if mv[-1] in s:
-						side = s
-						break
-				col = mv[:-1].split('-')[1]
-				if side != None:
-					if self.is_valid_sq_pos([row,col]):
-						if not self.grid[row][col].is_side_used(side):
-							full = self.grid[row][col].fill_side(direction, self.get_player_num())
-							if full:
-								if self.check_winner() == -1:
-									if human:
-										self.opg()
-										print "You filled a square, so go again."
-								else:
-									finished_playing = True
-							else:
-								finished_playing = True
+				for x in mv.split(','):
+					tup = self.move_str2list(x)
+					if tup[2] != None:
+						full = self.update_state(*tup)
+						if full and self.check_winner() == -1:
+							if human:
+								self.opg()
+								print "You filled a square, so go again."
+						else:
+							finished_playing = True
+							break
 		self.turn += 1
 		self.thinking = False
 			
@@ -173,9 +201,9 @@ def Squares(Game):
 				
 	def opg(self):
 		for y in range(self.rows):
-			top_row = "\t"
-			middle_row = str(y) + "\t"
-			bottom_row = "\t"
+			top_row = ' '
+			middle_row = str(y)
+			bottom_row = ' '
 			for x in range(self.cols):
 				sq = self.grid[y][x]
 				top_row += "." + sq.primary_print_str("UP")
@@ -183,12 +211,12 @@ def Squares(Game):
 				bottom_row += "." + sq.primary_print_str("DOWN")
 			top_row += "."
 			bottom_row += "."
-			if len(top_row) == 2*self.cols + 1:
+			if len(top_row) >= 2*self.cols + 1:
 				print top_row
 			print middle_row
-			if len(bottom_row) == 2*self.cols + 1:
+			if len(bottom_row) >= 2*self.cols + 1:
 				print bottom_row
-		print "="*(2*self.cols + 1)
+		print "="*max(len(top_row), len(middle_row), len(bottom_row))
 				
 	def is_valid_sq_pos(self, sq):
 		return (sq[0] in range(self.rows)) and (sq[1] in range(self.cols))
@@ -212,4 +240,8 @@ def Squares(Game):
 			self.winner = 2
 		return self.winner	
 		
+	
+	
+S = Squares(player.Human(), player.Human())
+S.play()
 	
