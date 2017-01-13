@@ -107,13 +107,27 @@ class Squares(Game):
 						box_str += s[0]
 					else:
 						box_str += ' '
-				str1 += box_str + ','
+				str1 += box_str + sq.get_tag() + ','
 			value += str1 + ';'
 		value += str(self.turn) + ';' + str(self.winner)
 		return value
 		
 	def load_state_from_string(self, state):
-		pass
+		new_state = state.split(';')
+		self.winner = new_state[-1]
+		self.turn = new_state[-2]
+		sq_data = new_state[:-2]
+		data = [x.split(',') for x in sq_data]
+		for y in range(self.rows):
+			for x in range(self.cols):
+				str1 = data[y][x]
+				tag = str1[-1]
+				str1 = str1[:-1]
+				for s in self.sides:
+					if s[0] in str1:
+						self.grid[y][x].fill_side(s,tag)
+					else:
+						self.grid[y][x].empty_side(s)
 		
 	def get_child_states(self):
 		root = str(self)
@@ -143,7 +157,7 @@ class Squares(Game):
 									moves += [mv_str + ',' + mv]
 							else:
 								moves += [mv_str]
-							self.grid[row][col].empty_side(s)
+							self.grid[y][x].empty_side(s)
 		return moves
 		
 	def update_state(self, row, col, side):
@@ -161,7 +175,7 @@ class Squares(Game):
 			if mv[-1] in s:
 				side = s
 				break
-		return [row,col,side]			
+		return [int(row),int(col),side]			
 
 	def do_turn(self):
 		human = self.is_human_turn()
@@ -179,7 +193,7 @@ class Squares(Game):
 				print "and S is one of U/D/L/R, for the side of the square."
 			mv = self.current_player().choose_move(self)
 			if human and mv in self.escapes:
-				self.handle_escape(sq)
+				self.handle_escape(mv)
 			else:
 				for x in mv.split(','):
 					tup = self.move_str2list(x)
@@ -201,9 +215,9 @@ class Squares(Game):
 				
 	def opg(self):
 		for y in range(self.rows):
-			top_row = ' '
+			top_row = ' '*len(str(y))
 			middle_row = str(y)
-			bottom_row = ' '
+			bottom_row = ' '*len(str(y))
 			for x in range(self.cols):
 				sq = self.grid[y][x]
 				top_row += "." + sq.primary_print_str("UP")
@@ -238,10 +252,150 @@ class Squares(Game):
 			self.winner = 0
 		elif win[2] > win[1]:
 			self.winner = 2
-		return self.winner	
+		return self.winner
+
+
+def squares_heuristic(game_state):
+	value = 0
+	#manipulate game_state into usable data
+	state_split = re.split(';', game_state)
+	winner = int(state_split[-1])
+	turn = int(state_split[-2])
+	matrix = [x.split(',') for x in state_split[:-2]]
+	#check if the game is over
+	if winner == 1:
+		return UPPER_BOUND
+	elif winner == 2:
+		return LOWER_BOUND
+	elif winner == 0:
+		return 0
+	#do some calculations that probably take too long
+	for row in matrix:
+		for sq in row:
+			if sq[-1] == "1":
+				value += 1
+			elif sq[-1] == "2":
+				value -= 1
+	#respect the bounds
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1
+	
+	return value
+	
+if __name__ == "__main__":	
+
+	option = "heuristic_test"
+	filename = "sq_game_data_d2.txt"
+	num_games = 0
+	win_counts = [0,0,0]	
+	
+	if option == "functionality_test":
+		num_games = 1000
+		for x in range(num_games):
+			g = Squares(player.RandomAI(),player.RandomAI(),True, n_rows = 5, n_cols = 5)
+			w = g.play()
+			win_counts[w] += 1
+			if x % 10 == 0:
+				print x
+	
+	if option == "simulate_all":	
+		filename = "sq_game_data_all.txt"
+		num_games = 10000
+		FILE = open(filename, 'a')
+		for x in range(num_games):
+			g = Squares(player.RandomAI(),player.RandomAI(),True)
+			w = g.play()
+			g.record_history_to_file(FILE)
+			if x % 100 == 0:
+				print x
+			win_counts[w] += 1
+		FILE.close()
+
+	elif option == "simulate_end":
+		filename = "sq_game_data.txt"
+		num_games = 50000
+		FILE = open(filename, 'a')
+		for x in range(num_games):
+			g = Squares(player.RandomAI(),player.RandomAI(),True)
+			w = g.play()
+			FILE.write(str(g) + '~' + str(w) + '\n')
+			if x % 100 == 0:
+				print x
+			win_counts[w] += 1
+		FILE.close()
+	
+	elif option == "simulate_d2_end":
+		filename = "sq_game_data_d2.txt"
+		num_games = 1000
+		FILE = open(filename, 'a')
+		for x in range(num_games):
+			ai1 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
+			ai1.set_child_selector(shallowest_first)
+			ai2 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
+			ai2.set_child_selector(shallowest_first)
+			g = Squares(ai1,ai2,True)
+			w = g.play()
+			FILE.write(str(g) + '~' + str(w) + '\n')
+			if x % 10 == 0:
+				print x
+			win_counts[w] += 1
+		FILE.close()
+	
+	elif option == "human_2p":		
+		g = Squares(player.Human(), player.Human())
+		g.play()
 		
-	
-	
-S = Squares(player.Human(), player.Human())
-S.play()
-	
+	elif option == "human_1pX":
+		ai = player.AI_ABPruning(squares_heuristic, depth_lim = 5)
+		ai.set_child_selector(shallowest_first)
+		g = Squares(player.Human(), ai)
+		g.play()
+		
+	elif option == "human_1pO":
+		ai = player.AI_ABPruning(squares_heuristic, depth_lim = 5)
+		ai.set_child_selector(shallowest_first)
+		g = Squares(ai, player.Human())
+		g.play()
+		
+#	elif option == "recorder_test":
+#		rec = recorder.Recorder(filename, BOARD_SIZE**2, BOARD_SIZE**2, ['X','O',' '])
+#		num_games = 5
+#		for x in range(num_games):
+#			print "Beginning game %i" % (x)
+#			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 4)
+#			ai1.set_child_selector(shallowest_first)
+#			g = Fractoe(ai1, player.RandomAI(), False, True)
+#			w = g.play()
+#			win_counts[w] += 1
+
+	elif option == "heuristic_test":
+		num_games = 1
+		for x in range(num_games):
+			print "Beginning game %i" % (x)
+			ai1 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
+			ai1.set_child_selector(shallowest_first)
+			ai2 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
+			ai2.set_child_selector(shallowest_first)
+			g = Squares(ai1,ai2,False, True)
+			w = g.play()
+			win_counts[w] += 1
+		
+#	elif option == "vs_mode":
+#		rec = recorder.Recorder(filename, BOARD_SIZE**2, BOARD_SIZE**2, ['X','O',' '])
+#		num_games = 5
+#		for x in range(num_games):
+#			print "Beginning game %i" % (x)
+#			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 5)
+#			ai1.set_child_selector(shallowest_first)
+#			ai2 = player.AI_ABPruning(fractoe_heuristic, depth_lim = 3)
+#			ai2.set_child_selector(shallowest_first)
+#			g = Fractoe(ai1,ai2,False, True)
+#			w = g.play()
+#			win_counts[w] += 1
+	print win_counts
+	for w in win_counts:
+		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+	print
+
