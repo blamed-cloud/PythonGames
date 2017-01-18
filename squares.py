@@ -58,6 +58,7 @@ class Square(object):
 		
 	def empty_side(self, direction):
 		self.filled = False
+		self.fill_tag = " "
 		if self.side[direction] != 0:
 			self.side[direction] = 0
 			if direction in self.links:
@@ -73,7 +74,7 @@ class Square(object):
 		return value
 		
 class Squares(Game):
-	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 4, n_cols = 5):
+	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 3, n_cols = 4):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.grid = []
 		# create empty squares
@@ -107,15 +108,16 @@ class Squares(Game):
 						box_str += s[0]
 					else:
 						box_str += ' '
-				str1 += box_str + sq.get_tag() + ','
+				str1 += box_str + str(sq.get_tag()) + ','
+			str1 = str1[:-1] #remove trailing comma
 			value += str1 + ';'
 		value += str(self.turn) + ';' + str(self.winner)
 		return value
 		
 	def load_state_from_string(self, state):
 		new_state = state.split(';')
-		self.winner = new_state[-1]
-		self.turn = new_state[-2]
+		self.winner = int(new_state[-1])
+		self.turn = int(new_state[-2])
 		sq_data = new_state[:-2]
 		data = [x.split(',') for x in sq_data]
 		for y in range(self.rows):
@@ -241,6 +243,7 @@ class Squares(Game):
 			for x in range(self.cols):
 				tag = self.grid[y][x].get_tag()
 				if tag == " ":
+					self.winner = -1
 					return -1
 				elif str(tag) == "1":
 					win[1] += 1
@@ -258,7 +261,7 @@ class Squares(Game):
 def squares_heuristic(game_state):
 	value = 0
 	#manipulate game_state into usable data
-	state_split = re.split(';', game_state)
+	state_split = game_state.split(';')
 	winner = int(state_split[-1])
 	turn = int(state_split[-2])
 	matrix = [x.split(',') for x in state_split[:-2]]
@@ -371,7 +374,7 @@ if __name__ == "__main__":
 #			win_counts[w] += 1
 
 	elif option == "heuristic_test":
-		num_games = 1
+		num_games = 5
 		for x in range(num_games):
 			print "Beginning game %i" % (x)
 			ai1 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
