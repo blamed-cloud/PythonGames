@@ -74,7 +74,7 @@ class Square(object):
 		return value
 		
 class Squares(Game):
-	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 3, n_cols = 4):
+	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 4, n_cols = 5):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.grid = []
 		# create empty squares
@@ -374,7 +374,7 @@ if __name__ == "__main__":
 #			win_counts[w] += 1
 
 	elif option == "heuristic_test":
-		num_games = 5
+		num_games = 1
 		for x in range(num_games):
 			print "Beginning game %i" % (x)
 			ai1 = player.AI_ABPruning(squares_heuristic, depth_lim = 2)
