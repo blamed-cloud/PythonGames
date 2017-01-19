@@ -11,6 +11,7 @@ from fractoe_heuristics import fractoe_heuristic
 from checkers import Checkers, checkers_heuristic
 from connect4 import Connect4, connect4_heuristic
 from othello import Othello, othello_heuristic
+from squares import Squares, squares_heuristic
 from AISuite.alphabeta import shallowest_first
 
 re_mk = prgm_lib.flag_re_mk
@@ -88,6 +89,7 @@ if str(o_args[11]) != "None":
 if str(o_args[12]) != "None":
 	ohuman = True
 
+can_recorder = True
 G = Fractoe
 heuristic = fractoe_heuristic
 tiles = ['X', 'O', ' ']
@@ -115,6 +117,11 @@ elif game == "Othello":
 	from othello import BOARD_SIZE as rec_board_height
 	rec_board_width = rec_board_height
 	prefix = "ot_"
+elif game == "Squares":
+	G = Squares
+	heuristic = squares_heuristic
+	prefix = "sq_"
+	can_recorder = False
 	
 if filename == "default":
 	filename = prefix + "game_data.txt"
@@ -123,7 +130,9 @@ player1 = player.RandomAI()
 player2 = player.RandomAI()
 rec = None
 
-
+if not can_recorder and (ai_x == "recorder" or ai_o == "recorder"):
+	print "Sorry, the game you chose is not set up to allow recorder ai."
+	raise SystemExit
 
 if ai_x == "random":
 	pass
