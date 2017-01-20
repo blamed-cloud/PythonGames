@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-o <'simulate_all'/'simulate_end'/'simulate_d2_end'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <ai_type_x>] [-a <ai_type_o>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-o <'simulate_all'/'simulate_end'/'simulate_d2_end'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <ai_type_x>] [-a <ai_type_o>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player

@@ -74,7 +74,7 @@ class Square(object):
 		return value
 		
 class Squares(Game):
-	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 4, n_cols = 5):
+	def __init__(self, player1, player2, be_quiet = False, show_game = False, n_rows = 3, n_cols = 4):
 		super(self.__class__, self).__init__(player1, player2, be_quiet)
 		self.grid = []
 		# create empty squares
