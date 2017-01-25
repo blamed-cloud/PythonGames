@@ -72,14 +72,19 @@ class Pig(Game):
 	def load_state_from_string(self, state):
 		split = state.split(';')
 		for x in range(3):
-			self.scores[x] = int(split[x])
+			try:
+				self.scores[x] = int(split[x])
+			except:
+				self.scores[x] = float(split[x])
 		self.turn = int(split[3])
+		self.check_winner()
 		
 	def opg(self):
 		print "Player1's score:    " + str(self.scores[1])
 		print "Player2's score:    " + str(self.scores[2])
 		print "it is currently player" + str(self.get_player_num()) + "'s turn."
 		print "current turn score: " + str(self.scores[0])
+		print
 		
 	def check_winner(self):
 		if self.scores[1] >= 100:
@@ -91,5 +96,29 @@ class Pig(Game):
 		return self.winner
 		
 	
-p = Pig(player.Human(), player.Human())
-p.play()
+def pig_heuristic(game_state):
+	value = 0
+	split = game_state.split(';')
+	
+	#check if the game is over
+	if int(split[1]) == 100:
+		return UPPER_BOUND
+	elif int(split[2]) == 100:
+		return LOWER_BOUND
+		
+	m = 1
+	if int(split[-1]) % 2 == 1:
+		m = -1
+	
+	value = int(split[1]) - int(split[2]) + m*int((5.0 * float(split[0]) + 20.0) / 6.0)
+	
+	#respect the bounds
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1
+	
+	return value
+	
+#p = Pig(player.Human(), player.Human())
+#p.play()
