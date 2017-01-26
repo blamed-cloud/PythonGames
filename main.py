@@ -13,7 +13,7 @@ from connect4 import Connect4, connect4_heuristic
 from othello import Othello, othello_heuristic
 from squares import Squares, squares_heuristic
 from pig import Pig, pig_heuristic
-from AISuite.alphabeta import shallowest_first
+#from AISuite.alphabeta import shallowest_first
 
 re_mk = prgm_lib.flag_re_mk
 
@@ -144,21 +144,21 @@ if ai_x == "random":
 	pass
 elif ai_x == "heuristic":
 	player1 = player.AI_ABPruning(heuristic, depth_lim = depth_x)
-	player1.set_child_selector(shallowest_first)
+#	player1.set_child_selector(shallowest_first)
 elif ai_x == "recorder":
 	rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_x)
-	player1.set_child_selector(shallowest_first)
+#	player1.set_child_selector(shallowest_first)
 if ai_o == "random":
 	pass
 elif ai_o == "heuristic":
 	player2 = player.AI_ABPruning(heuristic, depth_lim = depth_o)
-	player2.set_child_selector(shallowest_first)
+#	player2.set_child_selector(shallowest_first)
 elif ai_o == "recorder":
 	if rec == None:
 		rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player2 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_o)
-	player2.set_child_selector(shallowest_first)	
+#	player2.set_child_selector(shallowest_first)	
 
 if humans == 1:
 	if xhuman:

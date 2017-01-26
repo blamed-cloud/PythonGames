@@ -101,9 +101,9 @@ def pig_heuristic(game_state):
 	split = game_state.split(';')
 	
 	#check if the game is over
-	if int(split[1]) == 100:
+	if int(split[1]) >= 100:
 		return UPPER_BOUND
-	elif int(split[2]) == 100:
+	elif int(split[2]) >= 100:
 		return LOWER_BOUND
 		
 	m = 1
