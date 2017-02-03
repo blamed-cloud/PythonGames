@@ -144,7 +144,7 @@ if ai_x == "random":
 	pass
 elif ai_x == "heuristic":
 	player1 = player.AI_ABPruning(heuristic, depth_lim = depth_x)
-#	player1.set_child_selector(shallowest_first)
+	player1.set_child_selector(shallowest_first, shallowest_first.sel)
 elif ai_x == "recorder":
 	rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_x)
