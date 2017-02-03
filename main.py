@@ -13,7 +13,7 @@ from connect4 import Connect4, connect4_heuristic
 from othello import Othello, othello_heuristic
 from squares import Squares, squares_heuristic
 from pig import Pig, pig_heuristic
-#from AISuite.alphabeta import shallowest_first
+from AISuite.alphabeta import shallowest_first
 
 re_mk = prgm_lib.flag_re_mk
 
@@ -140,11 +140,13 @@ if not can_recorder and (ai_x == "recorder" or ai_o == "recorder"):
 	print "Sorry, the game you chose is not set up to allow recorder ai."
 	raise SystemExit
 
+print ai_x, ai_o
+
 if ai_x == "random":
 	pass
 elif ai_x == "heuristic":
 	player1 = player.AI_ABPruning(heuristic, depth_lim = depth_x)
-	player1.set_child_selector(shallowest_first, shallowest_first.sel)
+#	player1.set_child_selector(shallowest_first, shallowest_first.sel)
 elif ai_x == "recorder":
 	rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_x)
