@@ -140,8 +140,6 @@ if not can_recorder and (ai_x == "recorder" or ai_o == "recorder"):
 	print "Sorry, the game you chose is not set up to allow recorder ai."
 	raise SystemExit
 
-print ai_x, ai_o
-
 if ai_x == "random":
 	pass
 elif ai_x == "heuristic":
