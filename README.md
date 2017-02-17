@@ -3,7 +3,6 @@
 This repository is a collection of game engines, complete with heuristic functions, of various two-player games. It is primarily intended to test the functionality of my AISuite library, as well as to satisfy a personal interest with heursitic functions and board games.
 
 ## List of Games
-___
 * Checkers
 * Connect4
 * Fractoe
@@ -37,7 +36,7 @@ Similar to simulate_all, except only the end of the game is recorded (the game_s
 
 Similar to simulate_end, except instead of RandomAI, the games are played by AI_ABPruning ai with a depth limit of 2.
 
-#### [-n <numgames>]
+#### [-n \<numgames>]
 
 The numgames flag; also can be --numgames instead of -n. here <numgames> is an integer corresponding to how many games you want to play.
 
@@ -51,7 +50,7 @@ The game flag; also can be --game instead of -g. The -g is followed by the name 
 
 This mode is for playing the game, either with humans or AI's.
 
-#### [-n <numgames>]
+#### [-n \<numgames>]
 
 The numgames flag; also can be --numgames instead of -n. here <numgames> is an integer corresponding to how many games you want to play.
 
@@ -61,19 +60,19 @@ E.G. -n 10
 
 The game flag; also can be --game instead of -g. The -g is followed by the name of the game you want to play, and must be exactly equal to one of the above choices (case sensitive). Levenshtein-style error-correction update may be coming eventually.
 
-#### [-f <filename>]
+#### [-f \<filename>]
 
 The filename flag; can also be --filename instead of -f. The -f is followed by the name of the file you want to read from if you are using the recorder-heuristic.
 
-#### [-h <num_humans>]
+#### [-h \<num_humans>]
 
 The humans flag; can also be --humans instead of -h. The -h is followed by an integer (usually 1 or 2) corresponding to the number of humans playing in this game.
 
-#### [-D <depth_lim_x>]
+#### [-D \<depth_lim_x>]
 
 The DepthlimX flag; can also be --DepthlimX instead of -D. The -D is followed by an integer (usually between 2 and 5) corresponding to the depth limit for the X (first) player.
 
-#### [-d <depth_lim_o>]
+#### [-d \<depth_lim_o>]
 
 The depthlimO flag; can also be --depthlimO instead of -d. The -d is followed by an integer (usually between 2 and 5) corresponding to the depth limit for the O (second) player.
 
