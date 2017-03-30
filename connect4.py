@@ -8,6 +8,8 @@ from AISuite.game import Game as Game
 import AISuite.player as player
 from AISuite.alphabeta import UPPER_BOUND, LOWER_BOUND, shallowest_first
 import AISuite.recorder as recorder
+from AISuite.weight_heuristic import WeightHeuristic
+import AISuite.genetics as genetics
 
 STANDARD_C4_HEIGHT = 6
 STANDARD_C4_WIDTH = 7
@@ -168,65 +170,31 @@ def connect4_heuristic(game_state):
 		value = LOWER_BOUND+1
 	
 	return value
+	
+	
+class C4Organism(WeightHeuristic):
+	def parse(self, game_state):
+		state_split = re.split(';', game_state)
+		winner = int(state_split[-1])
+		turn = int(state_split[-2])	
+		grid = state_split[:-2]
+		matrix = [[x for x in item] for item in grid]
+		return (winner, turn, matrix)
 
 if __name__ == "__main__":
 	#g = Connect4(player.Human(), player.Human())
 	#g.play()
 	
-	option = "vs_mode"
-	filename = "c4_game_data.txt"
-	num_games = 0
-	win_counts = [0,0,0]
+	tokens = [' ', 'X', 'O']
 	
-	if option == "simulate":
-		num_games = 10000
-		FILE = open(filename, 'a')
-		for x in range(num_games):
-			g = Connect4(player.RandomAI(),player.RandomAI(),True)
-			w = g.play()
-			FILE.write(str(g) + '\n')
-			if x % 1000 == 0:
-				print x
-			win_counts[w] += 1
-		FILE.close()
+	weights = {}
+	for t in tokens:
+		weights[t] = [[0 for x in range(STANDARD_C4_WIDTH)] for y in range(STANDARD_C4_HEIGHT)]
 		
-	elif option == "recorder_test":
-		rec = recorder.Recorder(filename, STANDARD_C4_HEIGHT, STANDARD_C4_WIDTH, ['X','O',' '])
-		num_games = 10
-		for x in range(num_games):
-			print "Beginning game %i" % (x)
-			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 4)
-			ai1.set_child_selector(shallowest_first)
-			g = Connect4(player.RandomAI(), ai1, False, True)
-			w = g.play()
-			win_counts[w] += 1
-
-	elif option == "heuristic_test":
-		num_games = 5
-		for x in range(num_games):
-			print "Beginning game %i" % (x)
-			ai1 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
-			ai1.set_child_selector(shallowest_first)
-			ai2 = player.AI_ABPruning(connect4_heuristic, depth_lim = 4)
-			ai2.set_child_selector(shallowest_first)
-			g = Connect4(ai1,ai2,False, True)
-			w = g.play()
-			win_counts[w] += 1
-		
-	elif option == "vs_mode":
-		rec = recorder.Recorder(filename, STANDARD_C4_HEIGHT, STANDARD_C4_WIDTH, ['X','O',' '])
-		num_games = 5
-		for x in range(num_games):
-			print "Beginning game %i" % (x)
-			ai1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = 5)
-			ai1.set_child_selector(shallowest_first)
-			ai2 = player.AI_ABPruning(connect4_heuristic, depth_lim = 3)
-			ai2.set_child_selector(shallowest_first)
-			g = Connect4(ai1,ai2,False, True)
-			w = g.play()
-			win_counts[w] += 1
-	print win_counts
-	for w in win_counts:
-		print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
-	print
+	zero_org = C4Organism(weights)
+	
+	pop = genetics.Population(Connect4)
+	pop.set_gen(pop.create_random_gen(zero_org))
+	pop.evolve(1)
+	pop.export_gen_to_file("c4_gen_data")
 
