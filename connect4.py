@@ -194,7 +194,7 @@ if __name__ == "__main__":
 	zero_org = C4Organism(weights)
 	
 	pop = genetics.Population(Connect4)
-	pop.set_gen(pop.create_random_gen(zero_org, 50))
-	pop.evolve(1, 20, 3, 2, False)
+	pop.load_random_gen(zero_org, 20)
+	pop.evolve(1, 25, 2, 2, False)
 	pop.export_gen_to_file("c4_gen_data")
 
