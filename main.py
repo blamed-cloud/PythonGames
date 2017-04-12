@@ -215,6 +215,24 @@ elif option == "simulate_d2_end":
 			print x
 		win_counts[w] += 1
 	FILE.close()
+elif option == "rand_tests_first":
+	print "Testing Random tree going first against random"
+	for x in range(num_games):
+		print "Beginning game %i" % (x)
+		ai1 = player.Random_TreeAI(depth_x)
+		ai2 = player.RandomAI()
+		g = G(ai1, ai2, quiet, show)
+		w = g.play()
+		win_counts[w] += 1
+elif option == "rand_tests_second":
+	print "Testing Random tree going second against random"
+	for x in range(num_games):
+		print "Beginning game %i" % (x)
+		ai1 = player.Random_TreeAI(depth_o)
+		ai2 = player.RandomAI()
+		g = G(ai2, ai1, quiet, show)
+		w = g.play()
+		win_counts[w] += 1
 else:
 	for x in range(num_games):
 		if not quiet:
