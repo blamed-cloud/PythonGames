@@ -193,8 +193,17 @@ if __name__ == "__main__":
 		
 	zero_org = C4Organism(weights)
 	
+	## comment next line to create new random generation
+	gen_file = "c4_gen_data"
+	#
+	
 	pop = genetics.Population(Connect4)
-	pop.load_random_gen(zero_org, 20)
-	pop.evolve(1, 25, 2, 2, False)
+	if gen_file != None:
+		pop.load_gen_from_file(gen_file)
+	else:
+		pop.load_random_gen(zero_org, 20)
+	depth = 2
+	opponent = player.AI_ABPruning(connect4_heuristic, depth_lim = depth)
+	pop.evolve(1, 25, 2, depth, opponent, False)
 	pop.export_gen_to_file("c4_gen_data")
 
