@@ -20,7 +20,7 @@ There are two main modes that main.py can run in: option mode or user-specified 
 
 This mode is currently used for collecting game data for use with the recorder functionality. This is primarily done with the -o flag.
 
-#### [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'>]
+#### [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>]
 
 The mode flag; also can be --mode instead of -m. 
 
@@ -35,6 +35,14 @@ Similar to simulate_all, except only the end of the game is recorded (the game_s
 ##### -m simulate_d2_end
 
 Similar to simulate_end, except instead of RandomAI, the games are played by AI_ABPruning ai with a depth limit of 2.
+
+##### -m rand_tests_first
+
+Used to test the RandomAI against the Random_TreeAI where Random_TreeAI goes first.
+
+##### -m rand_tests_second
+
+Used to test the RandomAI against the Random_TreeAI where Random_TreeAI goes second.
 
 #### [-n \<numgames>]
 
@@ -76,13 +84,17 @@ The DepthlimX flag; can also be --DepthlimX instead of -D. The -D is followed by
 
 The depthlimO flag; can also be --depthlimO instead of -d. The -d is followed by an integer (usually between 2 and 5) corresponding to the depth limit for the O (second) player.
 
-#### [-A <'random'/'heuristic'/'recorder'>]
+#### [-A <'random'/'randomTree'/'heuristic'/'recorder'>]
 
 The AitypeX flag; can also be --AitypeX instead of -A.
 
 ##### -A random
 
 This specifies that the AI for the X player should be RandomAI.
+
+##### -A randomTree
+
+This specifies that the AI for the X player should be Random_TreeAI.
 
 ##### -A heuristic
 
@@ -92,7 +104,7 @@ This specifies that the AI for the X player should be AI_ABPruning, using the wr
 
 This specifies that the AI for the X player should be AI_ABPruning, using the recorder heuristic.
 
-#### [-a <'random'/'heuristic'/'recorder'>]
+#### [-a <'random'/'randomTree'/'heuristic'/'recorder'>]
 
 The aitypeO flag; can also be --aitypeO instead of -a. This flag is essentially the same as the -A flag except it is to specify the second player's AI.
 

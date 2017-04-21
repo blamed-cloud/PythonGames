@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'heuristic'/'recorder'>] [-a <'random'/'heuristic'/'recorder'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
@@ -142,6 +142,8 @@ if not can_recorder and (ai_x == "recorder" or ai_o == "recorder"):
 
 if ai_x == "random":
 	pass
+elif ai_x == "randomTree":
+	player1 = player.Random_TreeAI(depth_lim = depth_x)
 elif ai_x == "heuristic":
 	player1 = player.AI_ABPruning(heuristic, depth_lim = depth_x)
 #	player1.set_child_selector(shallowest_first, shallowest_first.sel)
@@ -151,6 +153,8 @@ elif ai_x == "recorder":
 #	player1.set_child_selector(shallowest_first)
 if ai_o == "random":
 	pass
+elif ai_o == "randomTree":
+	player2 = player.Random_TreeAI(depth_lim = depth_o)
 elif ai_o == "heuristic":
 	player2 = player.AI_ABPruning(heuristic, depth_lim = depth_o)
 #	player2.set_child_selector(shallowest_first)
@@ -177,6 +181,7 @@ elif humans == 2:
 	player2 = player.Human()
 	
 win_counts = [0,0,0]
+total_turns = 0
 		
 if option == "simulate_all":	
 	filename = prefix + "game_data_all.txt"
@@ -188,6 +193,7 @@ if option == "simulate_all":
 		if x % 100 == 0:
 			print x
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 	FILE.close()
 elif option == "simulate_end":
 	filename = prefix + "game_data.txt"
@@ -199,6 +205,7 @@ elif option == "simulate_end":
 		if x % 100 == 0:
 			print x
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 	FILE.close()	
 elif option == "simulate_d2_end":
 	filename = prefix + "game_data_d2.txt"
@@ -214,6 +221,7 @@ elif option == "simulate_d2_end":
 		if x % 10 == 0:
 			print x
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 	FILE.close()
 elif option == "rand_tests_first":
 	print "Testing Random tree going first against random"
@@ -224,6 +232,7 @@ elif option == "rand_tests_first":
 		g = G(ai1, ai2, quiet, show)
 		w = g.play()
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 elif option == "rand_tests_second":
 	print "Testing Random tree going second against random"
 	for x in range(num_games):
@@ -233,6 +242,7 @@ elif option == "rand_tests_second":
 		g = G(ai2, ai1, quiet, show)
 		w = g.play()
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 else:
 	for x in range(num_games):
 		if not quiet:
@@ -242,8 +252,12 @@ else:
 		player1.reset()
 		player2.reset()
 		win_counts[w] += 1
+		total_turns += g.get_turn()
 		
 print win_counts
 for w in win_counts:
 	print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
+print
+print "Total # turns: " + str(total_turns)
+print "Avg # turns:   " + str(total_turns/float(num_games))
 print
