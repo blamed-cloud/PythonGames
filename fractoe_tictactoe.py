@@ -75,6 +75,28 @@ class Tictactoe:
 
 	def is_finished(self):
 		return self.winner != " "
+		
+	def rotate(self, rotation):
+		if rotation.upper() in ['C','CLOCKWISE','R','RIGHT']:
+			self.rotate_clockwise()
+		else:
+			self.rotate_counterclockwise()
+
+	def rotate_clockwise(self):
+		cr = "630741852"
+		root = str(self)
+		new = ""
+		for x in cr:
+			new += root[int(x)]
+		self.load(new)
+		
+	def rotate_counterclockwise(self):
+		ccr = "258147036"
+		root = str(self)
+		new = ""
+		for x in ccr:
+			new += root[int(x)]
+		self.load(new)
 
 	def get_winner(self):
 		value = -1

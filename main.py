@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
@@ -8,6 +8,7 @@ import AISuite.recorder as recorder
 import random
 from fractoe import Fractoe
 from fractoe_heuristics import fractoe_heuristic
+from pentago import Pentago, pentago_heuristic
 from checkers import Checkers, checkers_heuristic
 from connect4 import Connect4, connect4_heuristic
 from othello import Othello, othello_heuristic
@@ -128,6 +129,12 @@ elif game == "Pig":
 	heuristic = pig_heuristic
 	prefix = "pg_"
 	can_recorder = False
+elif game == "Pentago":
+	G = Pentago
+	heuristic = pentago_heuristic
+	from pentago import BOARD_SIZE as rec_board_height
+	rec_board_width = rec_board_height
+	prefix = "pt_"
 	
 if filename == "default":
 	filename = prefix + "game_data.txt"
