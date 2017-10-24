@@ -45,9 +45,9 @@ class Pentago(Game):
 		moves = self.get_child_moves()
 		states = []
 		for m in moves:
-			self.update_from_move(move)
+			self.update_from_move(m)
 			states += [str(self)]
-			self.load_state_from_str(root)
+			self.load_state_from_string(root)
 		return states
 		
 	
@@ -124,7 +124,7 @@ class Pentago(Game):
 			row = (num - col) / BOARD_SIZE
 			self.grid[row][col].load(class_data[num])
 		self.turn = int(class_data[-1])
-		self.check_for_winner()
+		self.check_winner()
 		
 	
 	def opg(self):
@@ -185,7 +185,28 @@ class Pentago(Game):
 		
 	
 def pentago_heuristic(game_string):
-	return 4
+	state_l = game_string.split(";")
+	turn = state_l[-1]
+	state_l = state_l[:-1]
+	board_lists = [[let for let in x] for x in state_l]
+	x_val = 0
+	o_val = 0
+	
+	for board in board_lists:
+		x_val += wordops_lib.snake_search("XX",board,3,True)*2
+		x_val += wordops_lib.snake_search("XXX",board,3,True)*3
+		o_val += wordops_lib.snake_search("OO",board,3,True)*2
+		o_val += wordops_lib.snake_search("OOO",board,3,True)*3
+		
+	value = x_val - o_val
+	
+	#respect the bounds
+	if value >= UPPER_BOUND:
+		value = UPPER_BOUND-1
+	elif value <= LOWER_BOUND:
+		value = LOWER_BOUND+1	
+		
+	return x_val - o_val
 	
 	
 if __name__ == "__main__":
