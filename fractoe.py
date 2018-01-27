@@ -61,7 +61,13 @@ class Fractoe(Game):
 		value += str(self.turn) + ';'
 		value += str(self.current_box)
 		return value
-			
+	
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-2] + split_list[-1]
+		return ';'.join(split_list)
+
 	def get_child_states(self):
 		root = str(self)
 		moves = self.get_child_moves()

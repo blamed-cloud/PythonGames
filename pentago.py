@@ -39,6 +39,11 @@ class Pentago(Game):
 		value += str(self.turn)
 		return value
 		
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-1]
+		return ';'.join(split_list)
 	
 	def get_child_states(self):
 		root = str(self)
@@ -211,5 +216,5 @@ def pentago_heuristic(game_string):
 	
 if __name__ == "__main__":
 
-	g = Pentago(player.RandomAI(), player.RandomAI())
+	g = Pentago(player.Human(), player.RandomAI())
 	g.play()	

@@ -42,7 +42,7 @@ class Pig(Game):
 			move = self.current_player().choose_move(self)
 			if human and move in self.escapes:
 				self.handle_escape(move)
-			if str(move) in possible_moves + ['h','H','r','R','hold','roll']:
+			if str(move).lower() in possible_moves + ['h','r','hold','roll']:
 				if 'h' in move or 'H' in move:
 					self.scores[self.get_player_num()] += int(self.scores[0])
 					self.scores[0] = 0.0
@@ -69,6 +69,12 @@ class Pig(Game):
 	def __str__(self):
 		return str(self.scores[0]) + ';' + str(self.scores[1]) + ';' + str(self.scores[2]) + ';' + str(self.turn)
 		
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-1]
+		return ';'.join(split_list)
+
 	def load_state_from_string(self, state):
 		split = state.split(';')
 		for x in range(3):

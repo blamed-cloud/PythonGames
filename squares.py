@@ -97,6 +97,12 @@ class Squares(Game):
 		self.rows = n_rows
 		self.cols = n_cols
 
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-2] + [split_list[-1]]
+		return ';'.join(split_list)
+
 	def __str__(self):
 		value = ''
 		for row in self.grid:

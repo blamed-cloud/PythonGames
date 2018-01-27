@@ -6,6 +6,9 @@ __pycache__/
 #temp files
 *~
 
+#vim .swp files
+*.swp
+
 # C extensions
 *.so
 

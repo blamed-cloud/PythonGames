@@ -76,6 +76,12 @@ class Connect4(Game):
 			value += str1 + ';'
 		return value + str(self.turn) + ';' + str(self.winner)
 
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-2] + [split_list[-1]]
+		return ';'.join(split_list)
+
 	def load_state_from_string(self, state):
 		grid1 = re.split(';', state)
 		self.winner = int(grid1[-1])

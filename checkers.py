@@ -229,6 +229,14 @@ class Checkers(Game):
 					self.opg()
 		self.check_winner()
 
+
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-3] + split_list[-2]
+		return ';'.join(split_list)
+
+
 	def __str__(self):
 		value = ''
 		for row in self.matrix:

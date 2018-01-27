@@ -100,6 +100,12 @@ class Othello(Game):
 				self.winner = 0
 		return self.winner
 		
+	@staticmethod
+	def parse_state(game_state):
+		split_list = game_state.split(';')
+		split_list = split_list[:-2] + [split_list[-1]]
+		return ';'.join(split_list)
+
 	def __str__(self):
 		value = ''
 		for row in self.matrix:
