@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A/-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
@@ -54,40 +54,40 @@ ohuman = False
 
 if str(o_args[0]) != "None":
 	option = str(o_args[0])
-	
+
 if str(o_args[1]) != "None":
 	num_games = int(o_args[1])
 
 if str(o_args[2]) != "None":
 	filename = str(o_args[2])
-	
+
 if str(o_args[3]) != "None":
 	humans = int(o_args[3])
-	
+
 if str(o_args[4]) != "None":
 	game = str(o_args[4])
-	
+
 if str(o_args[5]) != "None":
 	depth_x = int(o_args[5])
-	
+
 if str(o_args[6]) != "None":
 	depth_o = int(o_args[6])
-	
+
 if str(o_args[7]) != "None":
 	ai_x = str(o_args[7])
-	
+
 if str(o_args[8]) != "None":
 	ai_o = str(o_args[8])
-	
+
 if str(o_args[9]) != "None":
 	show = True
-	
+
 if str(o_args[10]) != "None":
 	quiet = True
-	
+
 if str(o_args[11]) != "None":
 	xhuman = True
-	
+
 if str(o_args[12]) != "None":
 	ohuman = True
 
@@ -135,7 +135,7 @@ elif game == "Pentago":
 	from pentago import BOARD_SIZE as rec_board_height
 	rec_board_width = rec_board_height
 	prefix = "pt_"
-	
+
 if filename == "default":
 	filename = prefix + "game_data.txt"
 
@@ -158,6 +158,9 @@ elif ai_x == "recorder":
 	rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_x)
 #	player1.set_child_selector(shallowest_first)
+elif ai_x == "mcts":
+	player1 = player.MCTS_Player()
+
 if ai_o == "random":
 	pass
 elif ai_o == "randomTree":
@@ -169,7 +172,9 @@ elif ai_o == "recorder":
 	if rec == None:
 		rec = recorder.Recorder(filename, rec_board_height, rec_board_width, tiles)
 	player2 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_o)
-#	player2.set_child_selector(shallowest_first)	
+#	player2.set_child_selector(shallowest_first)
+elif ai_o == "mcts":
+	player2 = player.MCTS_Player()
 
 if humans == 1:
 	if xhuman:
@@ -186,11 +191,11 @@ if humans == 1:
 elif humans == 2:
 	player1 = player.Human()
 	player2 = player.Human()
-	
+
 win_counts = [0,0,0]
 total_turns = 0
-		
-if option == "simulate_all":	
+
+if option == "simulate_all":
 	filename = prefix + "game_data_all.txt"
 	FILE = open(filename, 'a')
 	for x in range(num_games):
@@ -213,7 +218,7 @@ elif option == "simulate_end":
 			print x
 		win_counts[w] += 1
 		total_turns += g.get_turn()
-	FILE.close()	
+	FILE.close()
 elif option == "simulate_d2_end":
 	filename = prefix + "game_data_d2.txt"
 	FILE = open(filename, 'a')
@@ -260,7 +265,7 @@ else:
 		player2.reset()
 		win_counts[w] += 1
 		total_turns += g.get_turn()
-		
+
 print win_counts
 for w in win_counts:
 	print str(w) + "/" + str(num_games) + " : " + str(w/float(num_games))
