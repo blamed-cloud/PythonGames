@@ -18,7 +18,7 @@ There are two main modes that main.py can run in: option mode or user-specified 
 
 ### Option Mode
 
-This mode is currently used for collecting game data for use with the recorder functionality. This is primarily done with the -o flag.
+This mode is currently used for collecting game data for use with the recorder functionality. This is primarily done with the -m flag.
 
 #### [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>]
 
@@ -84,7 +84,7 @@ The DepthlimX flag; can also be --DepthlimX instead of -D. The -D is followed by
 
 The depthlimO flag; can also be --depthlimO instead of -d. The -d is followed by an integer (usually between 2 and 5) corresponding to the depth limit for the O (second) player.
 
-#### [-A <'random'/'randomTree'/'heuristic'/'recorder'>]
+#### [-A <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>]
 
 The AitypeX flag; can also be --AitypeX instead of -A.
 
@@ -104,7 +104,11 @@ This specifies that the AI for the X player should be AI_ABPruning, using the wr
 
 This specifies that the AI for the X player should be AI_ABPruning, using the recorder heuristic.
 
-#### [-a <'random'/'randomTree'/'heuristic'/'recorder'>]
+##### -A mcts
+
+This specifies that the AI for the X player should be MCTS_Player, using monte carlo tree search.
+
+#### [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>]
 
 The aitypeO flag; can also be --aitypeO instead of -a. This flag is essentially the same as the -A flag except it is to specify the second player's AI.
 

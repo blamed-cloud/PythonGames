@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A/-a <'random'/'randomTree'/'heuristic'/'recorder'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
