@@ -112,7 +112,7 @@ This specifies that the AI for the X player should be MCTS_Player, using monte c
 
 The aitypeO flag; can also be --aitypeO instead of -a. This flag is essentially the same as the -A flag except it is to specify the second player's AI.
 
-#### [-t <time>]
+#### [-t \<time>]
 
 The time flag; can also be --time instead of -t. This flag is used to set the maximum turn time for the MCTS_Player class.
 
