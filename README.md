@@ -114,7 +114,7 @@ The aitypeO flag; can also be --aitypeO instead of -a. This flag is essentially 
 
 #### [-t \<time>]
 
-The time flag; can also be --time instead of -t. This flag is used to set the maximum turn time for the MCTS_Player class.
+The time flag; can also be --time instead of -t. This flag is used to set the maximum turn time for the MCTS_Player class. The default is 30 seconds. Give the AI more time and it (should) perform better, less and it will perform worse.
 
 #### [-s]
 
