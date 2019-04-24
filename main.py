@@ -80,6 +80,7 @@ if str(o_args[7]) != "None":
 
 if str(o_args[8]) != "None":
 	ai_o = str(o_args[8])
+	print ai_o
 
 if str(o_args[9]) != "None":
 	time = int(o_args[9])
