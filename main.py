@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #main.py
-###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
+###USAGE### main.py [-m <'simulate_all'/'simulate_end'/'simulate_d2_end'/'rand_tests_first'/'rand_tests_second'>] [-n <numgames>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] | [-n <numgames>] [-f <filename>] [-h <num_humans>] [-g <'Fractoe'/'Connect4'/'Checkers'/'Othello'/'Squares'/'Pig'/'Pentago'>] [-D <depth_lim_x>] [-d <depth_lim_o>] [-A <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-a <'random'/'randomTree'/'heuristic'/'recorder'/'mcts'>] [-t <time>] [-s] [-q] [-x] [-o] ; sms=N ; $#=0-13
 import AISuite.PythonLibraries.prgm_lib as prgm_lib
 import sys
 import AISuite.player as player
@@ -28,13 +28,14 @@ arg_dict[re_mk('DepthlimX')] = 1
 arg_dict[re_mk('depthlimO')] = 1
 arg_dict[re_mk('AitypeX')] = 1
 arg_dict[re_mk('aitypeO')] = 1
+arg_dict[re_mk('time')] = 1
 arg_dict[re_mk('show')] = 0
 arg_dict[re_mk('quiet')] = 0
 arg_dict[re_mk('xhuman')] = 0
 arg_dict[re_mk('ohuman')] = 0
 
-flag_argc = [1,1,1,1,1,1,1,1,1,0,0,0,0]
-flags = [re_mk('mode'), re_mk('numgames'), re_mk('file'), re_mk('humans'), re_mk('game'), re_mk('DepthlimX'), re_mk('depthlimO'), re_mk('AitypeX'), re_mk('aitypeO'), re_mk('show'), re_mk('quiet'), re_mk('xhuman'), re_mk('ohuman')]
+flag_argc = [1,1,1,1,1,1,1,1,1,1,0,0,0,0]
+flags = [re_mk('mode'), re_mk('numgames'), re_mk('file'), re_mk('humans'), re_mk('game'), re_mk('DepthlimX'), re_mk('depthlimO'), re_mk('AitypeX'), re_mk('aitypeO'), re_mk('time'), re_mk('show'), re_mk('quiet'), re_mk('xhuman'), re_mk('ohuman')]
 
 o_args = prgm_lib.arg_flag_ordering(sys.argv, flag_argc, flags)
 
@@ -47,6 +48,7 @@ depth_x = 4
 depth_o = 4
 ai_x = "random"
 ai_o = "random"
+time = 30
 show = False
 quiet = False
 xhuman = False
@@ -80,15 +82,18 @@ if str(o_args[8]) != "None":
 	ai_o = str(o_args[8])
 
 if str(o_args[9]) != "None":
-	show = True
+	time = int(o_args[9])
 
 if str(o_args[10]) != "None":
-	quiet = True
+	show = True
 
 if str(o_args[11]) != "None":
-	xhuman = True
+	quiet = True
 
 if str(o_args[12]) != "None":
+	xhuman = True
+
+if str(o_args[13]) != "None":
 	ohuman = True
 
 can_recorder = True
@@ -159,7 +164,7 @@ elif ai_x == "recorder":
 	player1 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_x)
 #	player1.set_child_selector(shallowest_first)
 elif ai_x == "mcts":
-	player1 = player.MCTS_Player()
+	player1 = player.MCTS_Player(turnTime = time)
 
 if ai_o == "random":
 	pass
@@ -174,7 +179,7 @@ elif ai_o == "recorder":
 	player2 = player.AI_ABPruning(rec.recorder_heuristic, depth_lim = depth_o)
 #	player2.set_child_selector(shallowest_first)
 elif ai_o == "mcts":
-	player2 = player.MCTS_Player()
+	player2 = player.MCTS_Player(turnTime = time)
 
 if humans == 1:
 	if xhuman:
