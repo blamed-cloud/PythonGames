@@ -1,0 +1,61 @@
+#!/user/bin/env python3
+#enums.py
+from enum import Enum
+
+class PrimaryStatNames(Enum):
+	HP = 0
+	STRENGTH = 1
+	MAGIC = 2
+	SKILL = 3
+	SPEED = 4
+	LUCK = 5
+	DEFENSE = 6
+	RESISTANCE = 7
+
+
+class ClassType(Enum):
+	INFANTRY = 0
+	MAGE = 1
+	ARMOR = 2
+	HORSE = 3
+	PEGASUS = 4
+	WYVERN = 5
+	BEAST = 6
+	DRAGON = 7
+	HAWK = 8
+	RAVEN = 9
+	HERON = 10
+
+
+class MoveType(Enum):
+	FOOT = 0
+	HORSE = 1
+	FLYING = 2
+
+
+class WeaponType(Enum):
+	SWORD = 0
+	LANCE = 1
+	AXE = 2
+	BOW = 3
+	KNIFE = 4
+	STRIKE = 5
+	FIRE = 6
+	THUNDER = 7
+	WIND = 8
+	LIGHT = 9
+	DARK = 10
+	STAFF = 11
+
+
+class WeaponRanks(Enum):
+	UNUSABLE = 0
+	E = 1
+	D = 2
+	C = 2
+	B = 3
+	A = 4
+	S = 5
+	SS = 6
+
+
