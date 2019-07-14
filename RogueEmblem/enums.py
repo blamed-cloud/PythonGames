@@ -2,6 +2,30 @@
 #enums.py
 from enum import Enum
 
+class OrderedEnum(Enum):
+
+	def __ge__(self, other):
+		if self.__class__ is other.__class__:
+			return self.value >= other.value
+		return NotImplemented
+
+	def __gt__(self, other):
+		if self.__class__ is other.__class__:
+			return self.value > other.value
+		return NotImplemented
+
+	def __le__(self, other):
+		if self.__class__ is other.__class__:
+			return self.value <= other.value
+		return NotImplemented
+
+	def __lt__(self, other):
+		if self.__class__ is other.__class__:
+			return self.value < other.value
+		return NotImplemented
+
+
+
 class PrimaryStatNames(Enum):
 	HP = 0
 	STRENGTH = 1
@@ -48,7 +72,7 @@ class WeaponType(Enum):
 	STAFF = 11
 
 
-class WeaponRanks(Enum):
+class WeaponRank(OrderedEnum):
 	UNUSABLE = 0
 	E = 1
 	D = 2
