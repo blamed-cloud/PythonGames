@@ -61,7 +61,7 @@ class WeaponRanksDict(object):
 
 def UnitClass(object):
 
-	def __init__(self, classType, moveType, classGrowths, maxWeaponRanks): # TODO: skills
+	def __init__(self, classType, moveType, classGrowths, maxWeaponRanks): # TODO: skills, promotiongains
 		self.classType = classType
 		self.moveType = moveType
 		self.growths = classGrowths

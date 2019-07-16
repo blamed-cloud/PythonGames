@@ -3,11 +3,12 @@
 
 class Unit(object):
 
-	# TODO: inventory, weaponRank, skills, secondaryStats, affinity, race, condition, support, associations, biorhythm
-	def __init__(self, name, unitClass, primaryStats):
+	# TODO: weaponRank, skills, secondaryStats, affinity, race, condition, support, associations, biorhythm
+	def __init__(self, name, unitClass, primaryStats, inventory):
 		self.name = name
 		self.unitClass = unitClass
 		self.primaryStats = primaryStats
+		self.inventory = inventory
 
 	def getName(self):
 		return self.name
