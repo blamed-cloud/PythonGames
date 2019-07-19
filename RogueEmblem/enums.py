@@ -37,6 +37,12 @@ class PrimaryStatNames(Enum):
 	RESISTANCE = 7
 
 
+class ClassTiers(OrderedEnum):
+	FIRST = 1
+	SECOND = 2
+	THIRD = 3
+
+
 class ClassType(Enum):
 	INFANTRY = 0
 	MAGE = 1

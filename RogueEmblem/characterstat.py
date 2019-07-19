@@ -7,14 +7,14 @@ class PrimaryStats(object):
 
 	def __init__(self, hp, strength, magic, skill, speed, luck, defense, resistance):
 		self.stats = {}
-		self.stats[PrimaryStatNames.HP] = hpGr
-		self.stats[PrimaryStatNames.STRENGTH] = strGr
-		self.stats[PrimaryStatNames.MAGIC] = magGr
-		self.stats[PrimaryStatNames.SKILL] = sklGr
-		self.stats[PrimaryStatNames.SPEED] = spdGr
-		self.stats[PrimaryStatNames.LUCK] = lckGr
-		self.stats[PrimaryStatNames.DEFENSE] = defGr
-		self.stats[PrimaryStatNames.RESISTANCE] = resGr
+		self.stats[PrimaryStatNames.HP] = hp
+		self.stats[PrimaryStatNames.STRENGTH] = strength
+		self.stats[PrimaryStatNames.MAGIC] = magic
+		self.stats[PrimaryStatNames.SKILL] = skill
+		self.stats[PrimaryStatNames.SPEED] = speed
+		self.stats[PrimaryStatNames.LUCK] = luck
+		self.stats[PrimaryStatNames.DEFENSE] = defense
+		self.stats[PrimaryStatNames.RESISTANCE] = resistance
 
 	def getStatByName(self, name):
 		assert name in PrimaryStatNames
@@ -23,15 +23,13 @@ class PrimaryStats(object):
 
 class CharacterStat(object):
 
-	def __init__(self, name, amount, cap, personalGrowth, classGrowth):
+	def __init__(self, name, amount, personalGrowth):
 		self.name = name
 		self.amount = amount
-		self.cap = cap
 		self.personalGrowth = personalGrowth
-		self.classGrowth = classGrowth
-		self.growthRate = self.personalGrowth + self.classGrowth
 		self.modifier = 0
 		self.multiplier = 1
+		self.bonus = 0
 
 	def getName(self):
 		return self.name
@@ -40,31 +38,18 @@ class CharacterStat(object):
 		return self.amount
 
 	# additive modifiers are added before multipliers
+	# and bonuses are added after multipliers
 	def getAmount(self):
-		return int((self.amount + self.modifier) * self.multiplier)
-
-	def hasCap(self):
-		return self.cap is not None
-
-	def getCap(self):
-		return self.cap
+		return int((self.amount + self.modifier) * self.multiplier + self.bonus)
 
 	def setPersonalGrowth(self, pGr):
 		self.personalGrowth = pGr
-		self._updateGrowthRate()
 
-	def setClassGrowth(self, cGr):
-		self.classGrowth = cGr
-		self._updateGrowthRate()
+	def getPersonalGrowth(self):
+		return self.personalGrowth
 
-	def _updateGrowthRate(self):
-		self.growthRate = self.personalGrowth + self.classGrowth
-
-	def getGrowthRate(self):
-		return self.growthRate
-
-	def increase(self, amount = 1):
-		if self.hasCap():
+	def increase(self, amount = 1, cap = None):
+		if cap is not None:
 			if self.amount < cap:
 				self.amount += abs(amount)
 				if self.amount > cap:
@@ -85,8 +70,15 @@ class CharacterStat(object):
 	def clearMultiplier(self):
 		self.multiplier = 1
 
+	def setBonus(self, bonus):
+		self.bonus = bonus
+
+	def clearBonus(self):
+		self.bonus = 0
+
 	def clearChanges(self):
 		self.clearModifier()
 		self.clearMultiplier()
+		self.clearBonus()
 
 
