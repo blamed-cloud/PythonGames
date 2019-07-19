@@ -1,5 +1,5 @@
 #!/user/bin/env python3
-#unitclass.py
+#characterclass.py
 from enums import *
 
 class ClassGrowths(object):
@@ -59,7 +59,7 @@ class WeaponRanksDict(object):
 		self.ranks[wType] = wRank
 
 
-def UnitClass(object):
+def CharacterClass(object):
 
 	def __init__(self, classType, moveType, classGrowths, maxWeaponRanks): # TODO: skills, promotiongains
 		self.classType = classType

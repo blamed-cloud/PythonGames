@@ -1,5 +1,5 @@
 #!/user/bin/env python3
-#unitstat.py
+#characterstat.py
 from enum import Enum
 
 
@@ -21,7 +21,7 @@ class PrimaryStats(object):
 		return self.stats[name]
 
 
-class UnitStat(object):
+class CharacterStat(object):
 
 	def __init__(self, name, amount, cap, personalGrowth, classGrowth):
 		self.name = name
