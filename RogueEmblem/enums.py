@@ -58,9 +58,7 @@ class ClassType(Enum):
 	WYVERN = 5
 	BEAST = 6
 	DRAGON = 7
-	HAWK = 8
-	RAVEN = 9
-	HERON = 10
+	BIRD = 8
 
 
 class MoveType(Enum):

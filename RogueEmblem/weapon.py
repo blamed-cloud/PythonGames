@@ -2,6 +2,16 @@
 #weapon.py
 from enums import *
 
+def defaultEffectiveDamage(wType):
+	if wType is WeaponType.BOW:
+		return {ClassType.PEGASUS, ClassType.WYVERN, ClassType.BIRD}
+	elif wType is WeaponType.FIRE:
+		return {ClassType.BEAST, ClassType.HORSE}
+	elif wType is WeaponType.THUNDER:
+		return {ClassType.WYVERN, ClassType.DRAGON}
+	elif wType is WeaponType.WIND:
+		return {ClassType.PEGASUS, ClassType.BIRD}
+	return set()
 
 class WeaponRange(object):
 
@@ -48,12 +58,13 @@ class WeaponStats(object):
 
 class Weapon(object):
 
-	def __init__(self, name, wType, wStats, maxUses, usesLeft, extraEffDmg = None, bonusStats = None, characterOnly = None):
+	def __init__(self, name, wType, wStats, maxUses, usesLeft, isMagic, extraEffDmg = None, bonusStats = None, characterOnly = None):
 		self.name = name
 		self.wType = wType
 		self.wStats = wStats
 		self.maxUses = maxUses
 		self.usesLeft = usesLeft
+		self.isMagic = isMagic
 		self.extraEffDmg = extraEffDmg
 		self.bonusStats = bonusStats
 		self.characterOnly = characterOnly
@@ -73,11 +84,20 @@ class Weapon(object):
 	def getUsesLeft(self):
 		return self.usesLeft
 
+	def isMagic(self):
+		return self.isMagic
+
 	def hasExtraEffectiveDamage(self):
 		return self.extraEffDmg is not None
 
 	def getExtraEffectiveDamage(self):
 		return self.extraEffDmg
+
+	def getAllEffectiveDamage(self):
+		if self.hasExtraEffectiveDamage():
+			return self.getExtraEffectiveDamage().union(defaultEffectiveDamage(self.getWeaponType()))
+		else:
+			return defaultEffectiveDamage(self.getWeaponType())
 
 	def hasBonusStats(self):
 		return self.bonusStats is not None
