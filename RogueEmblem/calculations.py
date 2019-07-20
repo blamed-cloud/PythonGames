@@ -68,9 +68,9 @@ def getWeaponTriangleDirection(wType1, wType2):
 
 def getCharacterStat(character, statName):
 	if statName in PrimaryStatNames:
-		return character.getPrimaryStats().getStatByName(statName)
+		return character.getPrimaryStats().getStatByName(statName).getAmount()
 	elif statName in SecondaryStatNames
-		return character.getSecondaryStats().getStatByName(statName)
+		return character.getSecondaryStats().getStatByName(statName).getAmount()
 	else:
 		raise ValueError
 

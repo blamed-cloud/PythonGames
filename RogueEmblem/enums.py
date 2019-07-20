@@ -93,3 +93,45 @@ class WeaponRank(OrderedEnum):
 	SS = 6
 
 
+class CalculatedStats(Enum):
+	ACCURACY = 0
+	AVOID = 1
+	CRIT = 2
+	DODGE = 3
+
+
+class StatChangeTypes(Enum):
+	MODIFIER = 0
+	MULTIPLIER = 1
+	BONUS = 2
+
+
+class SkillActivation(Enum):
+	ALWAYS = 0
+	IN_COMBAT = 1
+	COMMAND = 2
+	HP_THRESHOLD = 3
+	CHANCE = 4
+	TURN_START = 5
+	ATTACKS_SECOND = 6
+	ATTACKED_INDIRECTLY = 7
+
+
+class SkillTags(Enum):
+	STAT_CHANGE = 0
+	CANCEL_COUNTERATTACK = 1
+	NEGATE_CRIT = 2
+	ADEPT_ATTACK = 3
+	HEALING = 4
+	EXP_MULTIPLIER = 5
+	PASS = 6
+	EFFECTIVE_DAMAGE = 7
+	ATTACK_FIRST = 8
+	IGNORE_TERRAIN = 9
+	DEAL_DAMAGE = 10
+	UNEQUIP = 11
+	CORRODE = 12
+	NEGATE_EFFECTIVE_DAMAGE = 13
+	MASTERY_ATTACK = 14
+
+
