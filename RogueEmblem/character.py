@@ -4,13 +4,14 @@
 class Character(object):
 
 	# TODO: skills, affinity, race, condition, support, associations, biorhythm, level
-	def __init__(self, name, charClass, primaryStats, secondaryStats, inventory, weaponRanks):
+	def __init__(self, name, charClass, primaryStats, secondaryStats, inventory, weaponRanks, biorhythm):
 		self.name = name
 		self.characterClass = charClass
 		self.primaryStats = primaryStats
 		self.secondaryStats = secondaryStats
 		self.inventory = inventory
 		self.weaponRanks = weaponRanks
+		self.biorhythm = biorhythm # TODO: add class for this
 
 	def getName(self):
 		return self.name
@@ -32,4 +33,7 @@ class Character(object):
 
 	def getWeaponRanks(self):
 		return self.weaponRanks
+
+	def getBiorhythm(self):
+		return self.biorhythm
 
