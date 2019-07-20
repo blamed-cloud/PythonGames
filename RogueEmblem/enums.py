@@ -37,6 +37,12 @@ class PrimaryStatNames(Enum):
 	RESISTANCE = 7
 
 
+class SecondaryStatNames(Enum):
+	CON = 1
+	WEIGHT = 2
+	MOVE = 3
+
+
 class ClassTiers(OrderedEnum):
 	FIRST = 1
 	SECOND = 2

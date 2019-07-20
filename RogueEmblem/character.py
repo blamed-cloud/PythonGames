@@ -3,11 +3,12 @@
 
 class Character(object):
 
-	# TODO: skills, secondaryStats, affinity, race, condition, support, associations, biorhythm, level
-	def __init__(self, name, charClass, primaryStats, inventory, weaponRanks):
+	# TODO: skills, affinity, race, condition, support, associations, biorhythm, level
+	def __init__(self, name, charClass, primaryStats, secondaryStats, inventory, weaponRanks):
 		self.name = name
 		self.characterClass = charClass
 		self.primaryStats = primaryStats
+		self.secondaryStats = secondaryStats
 		self.inventory = inventory
 		self.weaponRanks = weaponRanks
 
@@ -19,6 +20,9 @@ class Character(object):
 
 	def getPrimaryStats(self):
 		return self.primaryStats
+
+	def getSecondaryStats(self):
+		return self.secondaryStats
 
 	def getStat(name):
 		return self.primaryStats.getStatByName(name)

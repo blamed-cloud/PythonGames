@@ -1,6 +1,6 @@
 #!/user/bin/env python3
 #characterstat.py
-from enum import Enum
+from enums import *
 
 
 class PrimaryStats(object):
@@ -18,6 +18,19 @@ class PrimaryStats(object):
 
 	def getStatByName(self, name):
 		assert name in PrimaryStatNames
+		return self.stats[name]
+
+
+class SecondaryStats(object):
+
+	def __init__(self, con, weight, move):
+		self.stats = {}
+		self.stats[SecondaryStatNames.CON] = con
+		self.stats[SecondaryStatNames.WEIGHT] = weight
+		self.stats[SecondaryStatNames.MOVE] = move
+
+	def getStatByName(self, name):
+		assert name in SecondaryStatNames
 		return self.stats[name]
 
 
