@@ -73,6 +73,9 @@ class CharacterStat(object):
 	def setModifier(self, amount):
 		self.modifier = amount
 
+	def addModifier(self, amount):
+		self.modifier += amount
+
 	def clearModifier(self):
 		self.modifier = 0
 
@@ -80,11 +83,17 @@ class CharacterStat(object):
 	def setMultiplier(self, amount):
 		self.multiplier = abs(amount)
 
+	def multiplyMultiplier(self, amount)
+		self.multiplier *= abs(amount)
+
 	def clearMultiplier(self):
 		self.multiplier = 1
 
 	def setBonus(self, bonus):
 		self.bonus = bonus
+
+	def addBonus(self, bonus):
+		self.bonus += bonus
 
 	def clearBonus(self):
 		self.bonus = 0

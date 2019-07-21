@@ -58,13 +58,13 @@ class WeaponStats(object):
 
 class Weapon(object):
 
-	def __init__(self, name, wType, wStats, maxUses, usesLeft, isMagic, extraEffDmg = None, bonusStats = None, characterOnly = None):
+	def __init__(self, name, wType, wStats, maxUses, usesLeft, damageType, extraEffDmg = None, bonusStats = None, characterOnly = None):
 		self.name = name
 		self.wType = wType
 		self.wStats = wStats
 		self.maxUses = maxUses
 		self.usesLeft = usesLeft
-		self.isMagic = isMagic
+		self.damageType = damageType
 		self.extraEffDmg = extraEffDmg
 		self.bonusStats = bonusStats
 		self.characterOnly = characterOnly
@@ -84,8 +84,11 @@ class Weapon(object):
 	def getUsesLeft(self):
 		return self.usesLeft
 
+	def getDamageType(self):
+		return self.damageType
+
 	def isMagic(self):
-		return self.isMagic
+		return self.damageType is DamageType.MAGICAL
 
 	def hasExtraEffectiveDamage(self):
 		return self.extraEffDmg is not None

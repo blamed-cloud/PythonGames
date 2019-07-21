@@ -93,11 +93,24 @@ class WeaponRank(OrderedEnum):
 	SS = 6
 
 
+class Combatant(Enum):
+	NONE = 0
+	ATTACKER = 1
+	DEFENDER = 2
+
+
+class DamageType(Enum):
+	NONE = 0
+	PHYSICAL = 1
+	MAGICAL = 2
+
+
 class CalculatedStats(Enum):
 	ACCURACY = 0
 	AVOID = 1
 	CRIT = 2
 	DODGE = 3
+	DAMAGE = 4
 
 
 class StatChangeTypes(Enum):
@@ -133,5 +146,27 @@ class SkillTags(Enum):
 	CORRODE = 12
 	NEGATE_EFFECTIVE_DAMAGE = 13
 	MASTERY_ATTACK = 14
+	WEXP_MULTIPLIER = 15
+	FATAL_DAMAGE = 16
+
+
+class SkillTarget(Enum):
+	SELF = 0
+	ADJACENT_ALLY = 1
+	ADJACENT_ENEMY = 2
+	ADJACENT_ANY = 3
+	COMBAT_ENEMY = 4
+
+
+# sacrifice?
+# wildheart?
+# glare?
+class SkillActions(Enum):
+	SHOVE = 0
+	CANTO = 1
+	STEAL = 2
+	SMITE = 3
+	FORMSHIFT = 4
+	GALDRAR = 5
 
 

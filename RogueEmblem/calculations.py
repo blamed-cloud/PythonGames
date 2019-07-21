@@ -77,15 +77,13 @@ def getCharacterStat(character, statName):
 def calcAttackSpeed(character):
 	speed = getCharacterStat(character, PrimaryStatNames.SPEED)
 	strength = getCharacterStat(character, PrimaryStatNames.STRENGTH)
+	wWeight = 0
+	penalty = 0
 	if character.getInventory().isEquipped():
 		weapon = character.getInventory().getEquippedItem()
 		wWeight = weapon.getWeaponStats().getWeight()
-	else:
-		wWeight = 0
 	if (strength < wWeight):
 		penalty = wWeight - strength
-	else:
-		penalty = 0
 	if speed <= penalty:
 		return 0
 	else:
@@ -102,6 +100,7 @@ def calcPhysicalDmg(character, enemyClassType, enemyWType, hasHighGround):
 			return 0
 		else:
 			wMight = weapon.getWeaponStats().getMight()
+		# TODO: check skills as well!
 		effectiveDamageSet = weapon.getAllEffectiveDamage()
 		if enemyClassType in effectiveDamageSet:
 			isEffectiveDamage = True
@@ -135,6 +134,7 @@ def calcMagicDmg(character, enemyClassType, enemyWType, hasHighGround):
 			return 0
 		else:
 			wMight = weapon.getWeaponStats().getMight()
+		# TODO: check skills as well!
 		effectiveDamageSet = weapon.getAllEffectiveDamage()
 		if enemyClassType in effectiveDamageSet:
 			isEffectiveDamage = True
@@ -196,7 +196,7 @@ def calcAvoid(character, terrain):
 	avoid = (attackSpeed * 2) + luck + terrain.getAvoidBonus()
 	return avoid
 
-def calcBattleAccuracy(accuracy, avoid):
+def calcHitChance(accuracy, avoid):
 	hitChance = accuracy - avoid
 	return truncateToPercent(hitChance)
 
@@ -221,15 +221,19 @@ def calcCritRate(character):
 def calcDodge(character):
 	return getCharacterStat(character, PrimaryStatNames.LUCK)
 
-def calcBattleCritRate(crit, dodge):
+def calcCritChance(crit, dodge):
 	critChance = crit - dodge
 	return truncateToPercent(critChance)
 
 ### MISC ###
 
-def canDouble(character, enemy):
-	charAS = calcAttackSpeed(character)
-	enemyAS = calcAttackSpeed(enemy)
-	return charAS - enemyAS >= 4:
-
+def calcDoubler(attacker, defender):
+	attackerAS = calcAttackSpeed(attacker)
+	defenderAS = calcAttackSpeed(defender)
+	if attackerAS - defenderAS >= 4:
+		return Combatant.ATTACKER
+	elif defenderAS - attackerAS >= 4:
+		return Combatant.DEFENDER
+	else:
+		return Combatant.NONE
 
